@@ -62,14 +62,18 @@ void prettyPrint(Case* Damier)
     printf("\b\b \n");
 }
 //------------------------------------------------------------------------------
-void prettyPrint(Case* Damier)
+void prettyPrintDamier(Case* Damier)
 {
     printf("| ");
     int i;
     for(i=0;i<50;i++)
     {
-        printf("%d ",i);
-        if (i < 10)   printf(" ");
+        //on extrait le numéro de la ligne
+        int numL = (i-i%5)/5;
+        //Si la ligne est paire
+        if (numL%2 == 0) printf("  %d ",Damier[i].equipe);
+        //Si la ligne est impaire
+        else printf("%d   ",Damier[i].equipe);
         if (i%5 == 4) printf("|\n| ");
     }
     printf("\b\b \n");
@@ -80,6 +84,6 @@ int main()
 {
     Case *Damier = genJeu();
     Damier = bougerPiece(Damier,17,22);
-    prettyPrint(Damier);
+    prettyPrintDamier(Damier);
     return 0;
 }
