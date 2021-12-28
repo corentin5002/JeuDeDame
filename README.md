@@ -15,7 +15,7 @@ se connecter au dépôt :
 
 git init
 
-git remote add origin git@github.com:corentin5002/test.git
+git remote add origin git@github.com:corentin5002/JeuDeDame.git
 git branch -M main
 git push -u origin main
 
