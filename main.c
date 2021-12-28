@@ -62,18 +62,6 @@ void prettyPrint(Case* Damier)
     printf("\b\b \n");
 }
 //------------------------------------------------------------------------------
-void prettyPrint(Case* Damier)
-{
-    printf("| ");
-    int i;
-    for(i=0;i<50;i++)
-    {
-        printf("%d ",i);
-        if (i < 10)   printf(" ");
-        if (i%5 == 4) printf("|\n| ");
-    }
-    printf("\b\b \n");
-}
 //------------------------------------------------------------------------------
 
 int main()
