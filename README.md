@@ -2,7 +2,7 @@
 
 # Note pour git
 
-*T'es meilleurs amis*
+*Tes meilleurs amis*
 
 - `git status`
 - `git checkout <nomBranch>`
