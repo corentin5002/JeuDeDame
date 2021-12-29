@@ -16,6 +16,7 @@ struct Case
 {
 	int dame  ;
 	int equipe;
+	int etat;
 };
 //==============================================================================
 Case * genJeu			(int tailleDamier);
@@ -23,7 +24,11 @@ void bougerPiece		(Case* Damier,int cDepart,int cArrivee);
 void prettyPrint		(Case* Damier);
 void prettyPrintDamier	(Case* Damier);
 void setCase			(Case* Damier,int coord,Case cNvl);
+int ennemie				(Case pion);
 void damierType1		(Case* Damier,int tailleDamier);
+
+
+void siEnnemieVoisin(Case* Damier,int coordP);
 
 //------------------------------------------------------------------------------
 //Fonction de génération d'un damier de taille 10x10
@@ -45,6 +50,7 @@ Case * genJeu(int tailleDamier)
         }
         else Damier[i].equipe= CASE;
         Damier[i].dame  = FALSE;
+		Damier[i].etat 	= TRUE;
         printf("%d ",Damier[i].equipe);
         if (i%5 == 4) printf("|\n| ");
     }
@@ -72,7 +78,7 @@ void prettyPrint(Case* Damier)
 //------------------------------------------------------------------------------
 void prettyPrintDamier(Case* Damier)
 {
-	printf("_______________________\n");
+	printf("\n_______________________\n");
     printf("| ");
     int i;
     for(i=0;i<50;i++)
@@ -96,17 +102,17 @@ void damierType1(Case * Damier,int tailleDamier)
 	Case caseTest;
 	caseTest.equipe = CASE;
 	caseTest.dame   = FALSE;
-
+	caseTest.etat   = TRUE;
 	for (int i=0; i<tailleDamier; i++)
 	{
 		setCase(Damier,i,caseTest);
 	}
 	caseTest.equipe = J1;
-	setCase(Damier,26,caseTest);
+	setCase(Damier,27,caseTest);
 	caseTest.equipe = J2;
 	setCase(Damier,21,caseTest);
-	setCase(Damier,20,caseTest);
-	setCase(Damier,10,caseTest);
+	setCase(Damier,22,caseTest);
+	setCase(Damier,11,caseTest);
 
 	printf("     Damier actuel\n");
 	prettyPrintDamier(Damier);
@@ -116,14 +122,119 @@ void setCase(Case* Damier,int coord,Case cNvl)
 {
     Damier[coord].equipe = cNvl.equipe;
 	Damier[coord].dame   = cNvl.dame;
+	Damier[coord].etat   = cNvl.etat;
 }
+//------------------------------------------------------------------------------
+int ennemie(Case pion)
+{
+	return (pion.equipe == J1) ? J2 : J1;
+}
+//------------------------------------------------------------------------------
+Case* cpyDamier(Case* Damier)
+{
+	Case * DamierR = malloc(50*sizeof(Case));
+	memcpy(DamierR,Damier,50);
+	for(int i=0;i<50;i++)
+	{
+		DamierR[i] = Damier[i];
+	}
+	return DamierR;
+}
+//------------------------------------------------------------------------------
+int* getDirection(int coordP)
+{
+	//Determine si on est sur ligne paire ou impaire
+	int numLigne = (coordP-coordP%5)/5;
+	int* direction = malloc(4*sizeof(int));
+
+	if (numLigne%2 == 0)
+	{
+		int tmp[4]={-5,-4,5,6};
+		for (int i = 0; i < 4; i++) direction[i] = tmp[i];
+	}
+	else
+	{
+		int tmp[4]={-6,-5,4,5};
+		for (int i = 0; i < 4; i++) direction[i] = tmp[i];
+
+	}
+	return direction;
+}
+//------------------------------------------------------------------------------
+int** exploreCheminEnnemie(Case* DamierR,int compt,int coordP,int equipe)
+{
+
+	int test = FALSE;
+	int* direction = getDirection(coordP);
+	Case pion = DamierR[coordP];
+	pion.equipe = equipe;
+
+	for(int i=0;i<4;i++)
+	{
+		int voisin = coordP + direction[i];
+		int * directionVoisin = getDirection(voisin);
+		printf("coordP %d et voisin regardé : %d \n", coordP,voisin);
+		//On regarde si le pion dans la direction i est ennemie et si la case dérriére est prenable
+		if(DamierR[voisin].equipe == ennemie(pion)&& DamierR[voisin+directionVoisin[i]].equipe == 0)
+		{
+			printf("voisin : %d\n", voisin);
+			test = TRUE;
+		}
+	}
+	if (test)
+	{
+		int* chemin = malloc((compt+1)*sizeof(int));
+		chemin[0] = compt;
+		//on doit retourner un int ** donc je retourne l'adresse de l'adresse du tableau ?
+		pion.equipe = CASE;
+		return chemin;
+	}
+}
+//------------------------------------------------------------------------------
+//Fonctions pour détecter les mouvements des pions
+
+//Cas de si on a au moins un jeton enemie en voisin
+void siEnnemieVoisin(Case* Damier,int coordP)
+{
+	Case pion = Damier[coordP];
+
+	//direction est le "patron" des directions autour du pion en coordP
+	int* direction = getDirection(coordP);
+
+	//code de recherche
+	int * arriveeCaseMange = malloc(sizeof(int)*4);
+	int i;
+	for (i = 0; i<4 ; i++)
+	{
+		//Initialisation de la liste des voisin mangeables
+		arriveeCaseMange[i]=0;
+		int voisin = coordP + direction[i];
+		int * directionVoisin = getDirection(voisin);
+		//On regarde si le pion dans la direction i est ennemie et si la case dérriére est prenable
+		if(Damier[voisin].equipe == ennemie(pion) && Damier[voisin+directionVoisin[i]].equipe == 0)
+		{
+			printf("Le pion en %d est prenable\n",voisin);
+			arriveeCaseMange[i] = voisin+directionVoisin[i];
+			Damier[voisin].etat = FALSE;
+			//Recherche recursive qui ressort le max de chaque chemin
+			int** chemins = exploreCheminEnnemie(Damier,1,voisin+directionVoisin[i],pion.equipe);
+
+		}
+	}
+
+	//Si aucun voisin n'est mangeable.
+
+	//Sinon :
+}
+
 //------------------------------------------------------------------------------
 
 int main()
 {
+	//Case test = {FALSE,J1};
     Case *Damier = genJeu(50);
     bougerPiece(Damier,17,22);
-
 	damierType1(Damier,50);
+	siEnnemieVoisin(Damier,27);
     return 0;
 }
