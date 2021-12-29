@@ -19,16 +19,22 @@ struct Case
 	int etat;
 };
 //==============================================================================
+//outils
 Case * genJeu			(int tailleDamier);
 void bougerPiece		(Case* Damier,int cDepart,int cArrivee);
 void prettyPrint		(Case* Damier);
 void prettyPrintDamier	(Case* Damier);
 void setCase			(Case* Damier,int coord,Case cNvl);
-int ennemie				(Case pion);
+int  ennemie			(Case pion);
 void damierType1		(Case* Damier,int tailleDamier);
+int* getDirection		(int coordP);
+Case* cpyDamier			(Case* Damier);
 
 
+//==============================================================================
+int** exploreCheminEnnemie(Case* DamierR,int compt,int coordP,int equipe)
 void siEnnemieVoisin(Case* Damier,int coordP);
+//==============================================================================
 
 //------------------------------------------------------------------------------
 //Fonction de génération d'un damier de taille 10x10
@@ -161,36 +167,6 @@ int* getDirection(int coordP)
 	return direction;
 }
 //------------------------------------------------------------------------------
-int** exploreCheminEnnemie(Case* DamierR,int compt,int coordP,int equipe)
-{
-
-	int test = FALSE;
-	int* direction = getDirection(coordP);
-	Case pion = DamierR[coordP];
-	pion.equipe = equipe;
-
-	for(int i=0;i<4;i++)
-	{
-		int voisin = coordP + direction[i];
-		int * directionVoisin = getDirection(voisin);
-		printf("coordP %d et voisin regardé : %d \n", coordP,voisin);
-		//On regarde si le pion dans la direction i est ennemie et si la case dérriére est prenable
-		if(DamierR[voisin].equipe == ennemie(pion)&& DamierR[voisin+directionVoisin[i]].equipe == 0)
-		{
-			printf("voisin : %d\n", voisin);
-			test = TRUE;
-		}
-	}
-	if (test)
-	{
-		int* chemin = malloc((compt+1)*sizeof(int));
-		chemin[0] = compt;
-		//on doit retourner un int ** donc je retourne l'adresse de l'adresse du tableau ?
-		pion.equipe = CASE;
-		return chemin;
-	}
-}
-//------------------------------------------------------------------------------
 //Fonctions pour détecter les mouvements des pions
 
 //Cas de si on a au moins un jeton enemie en voisin
@@ -225,6 +201,36 @@ void siEnnemieVoisin(Case* Damier,int coordP)
 	//Si aucun voisin n'est mangeable.
 
 	//Sinon :
+}
+//------------------------------------------------------------------------------
+int** exploreCheminEnnemie(Case* DamierR,int compt,int coordP,int equipe)
+{
+
+	int test = FALSE;
+	int* direction = getDirection(coordP);
+	Case pion = DamierR[coordP];
+	pion.equipe = equipe;
+
+	for(int i=0;i<4;i++)
+	{
+		int voisin = coordP + direction[i];
+		int * directionVoisin = getDirection(voisin);
+		printf("coordP %d et voisin regardé : %d \n", coordP,voisin);
+		//On regarde si le pion dans la direction i est ennemie et si la case dérriére est prenable
+		if(DamierR[voisin].equipe == ennemie(pion)&& DamierR[voisin+directionVoisin[i]].equipe == 0)
+		{
+			printf("voisin : %d\n", voisin);
+			test = TRUE;
+		}
+	}
+	if (test)
+	{
+		int* chemin = malloc((compt+1)*sizeof(int));
+		chemin[0] = compt;
+		//on doit retourner un int ** donc je retourne l'adresse de l'adresse du tableau ?
+		pion.equipe = CASE;
+		return chemin;
+	}
 }
 
 //------------------------------------------------------------------------------
