@@ -32,7 +32,7 @@ Case* cpyDamier			(Case* Damier);
 
 
 //==============================================================================
-int** exploreCheminEnnemie(Case* DamierR,int compt,int coordP,int equipe)
+int* exploreCheminEnnemie(Case* DamierR,int compt,int coordP,int equipe);
 void siEnnemieVoisin(Case* Damier,int coordP);
 //==============================================================================
 
@@ -102,6 +102,26 @@ void prettyPrintDamier(Case* Damier)
 
 }
 //------------------------------------------------------------------------------
+void prettyPrintPassage(Case* Damier)
+{
+	printf("\n_______________________\n");
+    printf("| ");
+    int i;
+    for(i=0;i<50;i++)
+    {
+        //on extrait le numéro de la ligne
+        int numL = (i-i%5)/5;
+        //Si la ligne est paire
+        if (numL%2 == 0) printf("  %d ",Damier[i].etat);
+        //Si la ligne est impaire
+        else printf("%d   ",Damier[i].etat);
+        if (i%5 == 4) printf("|\n| ");
+    }
+    printf("\b\b");
+	printf("_______________________\n");
+
+}
+//------------------------------------------------------------------------------
 
 void damierType1(Case * Damier,int tailleDamier)
 {
@@ -140,7 +160,7 @@ Case* cpyDamier(Case* Damier)
 {
 	Case * DamierR = malloc(50*sizeof(Case));
 	memcpy(DamierR,Damier,50);
-	for(int i=0;i<50;i++) DamierR[i] = Damier[i];
+	for(int i=0;i<50;i++)DamierR[i] = Damier[i];
 	return DamierR;
 }
 //------------------------------------------------------------------------------
@@ -152,12 +172,12 @@ int* getDirection(int coordP)
 
 	if (numLigne%2 == 0)
 	{
-		int tmp[4]={-5,-4,5,6};
+		int tmp[4]={-5,-4,6,5};
 		for (int i = 0; i < 4; i++) direction[i] = tmp[i];
 	}
 	else
 	{
-		int tmp[4]={-6,-5,4,5};
+		int tmp[4]={-6,-5,5,4};
 		for (int i = 0; i < 4; i++) direction[i] = tmp[i];
 
 	}
@@ -182,15 +202,19 @@ void siEnnemieVoisin(Case* Damier,int coordP)
 		//Initialisation de la liste des voisin mangeables
 		arriveeCaseMange[i]=0;
 		int voisin = coordP + direction[i];
-		int * directionVoisin = getDirection(voisin);
+		int * directVoisin = getDirection(voisin);
 		//On regarde si le pion dans la direction i est ennemie et si la case dérriére est prenable
-		if(Damier[voisin].equipe == ennemie(pion) && Damier[voisin+directionVoisin[i]].equipe == 0)
+		if(Damier[voisin].equipe == ennemie(pion) && Damier[voisin+directVoisin[i]].equipe == 0)
 		{
 			printf("Le pion en %d est prenable\n",voisin);
-			arriveeCaseMange[i] = voisin+directionVoisin[i];
+			arriveeCaseMange[i] = voisin+directVoisin[i];
+
+			Damier[coordP].etat = FALSE;
 			Damier[voisin].etat = FALSE;
+			Damier[voisin+directVoisin[i]].etat = FALSE;
+			prettyPrintPassage(Damier);
 			//Recherche recursive qui ressort le max de chaque chemin
-			int** chemins = exploreCheminEnnemie(Damier,1,voisin+directionVoisin[i],pion.equipe);
+			int* chemins = exploreCheminEnnemie(Damier,1,voisin+directVoisin[i],pion.equipe);
 
 		}
 	}
@@ -200,32 +224,68 @@ void siEnnemieVoisin(Case* Damier,int coordP)
 	//Sinon :
 }
 //------------------------------------------------------------------------------
-int** exploreCheminEnnemie(Case* DamierR,int compt,int coordP,int equipe)
+int* exploreCheminEnnemie(Case* DamierR,int compt,int coordP,int equipe)
 {
-
-	int test = FALSE;
-	int* direction = getDirection(coordP);
+	//int nbCheminEg = 0;
+	int test = TRUE;
 	Case pion = DamierR[coordP];
+	int* direction = getDirection(coordP);
+	int* cheminMax = malloc(sizeof(int));
+	cheminMax[0] = 0;
 	pion.equipe = equipe;
 
 	for(int i=0;i<4;i++)
 	{
 		int voisin = coordP + direction[i];
-		int * directionVoisin = getDirection(voisin);
-		printf("coordP %d et voisin regardé : %d \n", coordP,voisin);
+		int * directVoisin = getDirection(voisin);
+		//printf("coordP %d et voisin regardé : %d \n", coordP,voisin);
+
 		//On regarde si le pion dans la direction i est ennemie et si la case dérriére est prenable
-		if(DamierR[voisin].equipe == ennemie(pion)&& DamierR[voisin+directionVoisin[i]].equipe == 0)
+		if(DamierR[voisin].equipe == ennemie(pion)&& DamierR[voisin+directVoisin[i]].equipe == 0)
 		{
-			printf("voisin : %d\n", voisin);
-			test = TRUE;
+			//On verifie que le pion n'a pas déjà été "sauté" dans la sequence
+			if(DamierR[voisin].etat)
+			{
+				//printf("voisin : %d\n", voisin);
+				test = FALSE;
+				DamierR[voisin].etat = FALSE;
+				DamierR[voisin+directVoisin[i]].etat = FALSE;
+
+				int * chemin = exploreCheminEnnemie(DamierR,compt+1,voisin+directVoisin[i],equipe);
+				chemin[compt] = coordP;
+
+				printf("DEBUG1 [");
+				for (int i=0;i<compt+2;i++)
+				{
+					printf("%d ,",chemin[i]);
+				}
+				printf("\b]\n");
+				// on ajoute à la sauuvegarde la coord où attéris le pion après avoir mangé
+				if (cheminMax[0] < chemin[0])
+				{
+					free(cheminMax);
+					cheminMax = chemin;
+				}
+
+				/*else if (cheminMax[0] == chemin[0])
+				{
+					nbCheminEg++;
+					cheminMax[nbCheminEg] =
+				}*/
+
+				cheminMax[compt]=coordP;
+			}
 		}
 	}
 	if (test)
 	{
 		int* chemin = malloc((compt+1)*sizeof(int));
 		chemin[0] = compt;
+		for (int i=1;i<compt+1;i++) chemin[i]=-1;
+		chemin[compt] = coordP;
+
 		//on doit retourner un int ** donc je retourne l'adresse de l'adresse du tableau ?
-		pion.equipe = CASE;
+		pion.etat = TRUE;
 		return chemin;
 	}
 }
