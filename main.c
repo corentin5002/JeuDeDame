@@ -140,10 +140,7 @@ Case* cpyDamier(Case* Damier)
 {
 	Case * DamierR = malloc(50*sizeof(Case));
 	memcpy(DamierR,Damier,50);
-	for(int i=0;i<50;i++)
-	{
-		DamierR[i] = Damier[i];
-	}
+	for(int i=0;i<50;i++) DamierR[i] = Damier[i];
 	return DamierR;
 }
 //------------------------------------------------------------------------------
