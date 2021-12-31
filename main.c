@@ -178,6 +178,11 @@ int ennemie(Case pion)
 	return (pion.equipe == J1) ? J2 : J1;
 }
 //------------------------------------------------------------------------------
+int allie(Case pion)
+{
+	return (pion.equipe == J1) ? J2 : J1;
+}
+//------------------------------------------------------------------------------
 Case* cpyDamier(Case* Damier)
 {
 	Case * DamierR = malloc(50*sizeof(Case));
@@ -192,21 +197,98 @@ int* getDirection(int coordP)
 	int numLigne = (coordP-coordP%5)/5;
 	int* direction = malloc(4*sizeof(int));
 
-	if (numLigne%2 == 0)
+    //Coin en Haut à droite
+    if (coordP == 4)
+    {
+        int tmp[4]={0,0,0,5};
+        for (int i = 0; i < 4; i++) direction[i] = tmp[i];
+    }
+    //Coin en Bas à gauche
+    else if (coordP == 45)
+    {
+        int tmp[4]={0,-5,0,0};
+        for (int i = 0; i < 4; i++) direction[i] = tmp[i];
+    }
+    //Ligne du Haut
+    else if (numligne == 0)
+    {
+        int tmp[4]={0,0,6,5};
+        for (int i = 0; i < 4; i++) direction[i] = tmp[i];
+    }
+    //Ligne du Bas
+    else if (numligne == 5)
+    {
+        int tmp[4]={-6,-5,0,0};
+        for (int i = 0; i < 4; i++) direction[i] = tmp[i];
+    }
+    //Colonne de Droite
+    else if (coordP % 10 == 4)
+    {
+        //Case sur les lignes paires
+        if (numLigne%2 == 0)
+        {
+            int tmp[4]={-5,0,0,5};
+            for (int i = 0; i < 4; i++) direction[i] = tmp[i];
+        }
+        //Case sur les lignes impaires
+        else
+        {
+            int tmp[4]={-6,0,0,4};
+            for (int i = 0; i < 4; i++) direction[i] = tmp[i];
+        }
+    }
+    //Colonne de Gauche
+    else if (coordP % 10 == 5)
+    {
+        //Case sur les lignes paires
+        if (numLigne%2 == 0)
+        {
+            int tmp[4]={0,-4,6,0};
+            for (int i = 0; i < 4; i++) direction[i] = tmp[i];
+        }
+        //Case sur les lignes impaires
+        else
+        {
+            int tmp[4]={0,-5,5,0};
+            for (int i = 0; i < 4; i++) direction[i] = tmp[i];
+        }
+    }
+    //Case sur les lignes paires
+	else if (numLigne%2 == 0)
 	{
 		int tmp[4]={-5,-4,6,5};
 		for (int i = 0; i < 4; i++) direction[i] = tmp[i];
 	}
+    //Case sur les lignes impaires
 	else
 	{
 		int tmp[4]={-6,-5,5,4};
 		for (int i = 0; i < 4; i++) direction[i] = tmp[i];
 
 	}
+
 	return direction;
 }
 //------------------------------------------------------------------------------
 //Fonctions pour détecter les mouvements des pions
+
+int * prioMouvement(Case* Damier, int coordP)
+{
+    Case piece = Damier[coordP];
+
+    if (siEnnemieVoisin(Damier, coordP) != NULL)
+    {
+        return siEnnemieVoisin(Damier, coordP);
+    }
+    else if (siAucunMouv(Damier, coordP) != NULL)
+    {
+        return {-1};
+    }
+    else
+    {
+        return
+    }
+}
 /*
 //Cas de si on a au moins un jeton enemie en voisin
 void siEnnemieVoisin(Case* Damier,int coordP)
