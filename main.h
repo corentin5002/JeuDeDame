@@ -36,11 +36,20 @@ Case * genJeu			(int tailleDamier);
 void bougerPiece		(Case* Damier,int cDepart,int cArrivee);
 void prettyPrint		(Case* Damier);
 void prettyPrintDamier	(Case* Damier);
+void prettyPrintPassage (Case* Damier);
 void setCase			(Case* Damier,int coord,Case cNvl);
 int  ennemie			(Case pion);
-void damierType1		(Case* Damier,int tailleDamier);
-int* getDirection		(int coordP);
 Case* cpyDamier			(Case* Damier);
+int* getDirection		(int coordP);
+int * prioMouvement(Case* Damier, int coordP)
+
+//Damiers type
+void damierType1        (Case * Damier,int tailleDamier);
+void damierType2        (Case * Damier,int tailleDamier)
+
+//==============================================================================
+int* exploreCheminEnnemie(Case* DamierR,int compt,int coordP,int equipe);
+//==============================================================================
 
 
 //==============================================================================

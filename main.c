@@ -1,40 +1,6 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <time.h>
-#include <dirent.h>
-#include <string.h>
+#include "main.h"
 
-#define J1 1
-#define J2 2
-#define CASE 0
-#define TRUE  1
-#define FALSE 0
-//==============================================================================
-//structure d'une case du Damier------------------------------------------------
-typedef struct Case Case;
-struct Case
-{
-	int dame  ;
-	int equipe;
-	int etat;
-};
-//==============================================================================
-//outils
-Case * genJeu			(int tailleDamier);
-void bougerPiece		(Case* Damier,int cDepart,int cArrivee);
-void prettyPrint		(Case* Damier);
-void prettyPrintDamier	(Case* Damier);
-void setCase			(Case* Damier,int coord,Case cNvl);
-int  ennemie			(Case pion);
-void damierType1		(Case* Damier,int tailleDamier);
-int* getDirection		(int coordP);
-Case* cpyDamier			(Case* Damier);
-
-
-//==============================================================================
-int* exploreCheminEnnemie(Case* DamierR,int compt,int coordP,int equipe);
-void siEnnemieVoisin(Case* Damier,int coordP);
-//==============================================================================
+/* VOIR "main.h" POUR COURTE DESCRIPTION DES FONCTIONS ET STRUCTURES */
 
 //------------------------------------------------------------------------------
 //Fonction de génération d'un damier de taille 10x10
@@ -174,11 +140,6 @@ void setCase(Case* Damier,int coord,Case cNvl)
 }
 //------------------------------------------------------------------------------
 int ennemie(Case pion)
-{
-	return (pion.equipe == J1) ? J2 : J1;
-}
-//------------------------------------------------------------------------------
-int allie(Case pion)
 {
 	return (pion.equipe == J1) ? J2 : J1;
 }
