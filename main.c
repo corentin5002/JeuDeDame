@@ -171,13 +171,13 @@ int* getDirection(int coordP)
         for (int i = 0; i < 4; i++) direction[i] = tmp[i];
     }
     //Ligne du Haut
-    else if (numligne == 0)
+    else if (numLigne == 0)
     {
         int tmp[4]={0,0,6,5};
         for (int i = 0; i < 4; i++) direction[i] = tmp[i];
     }
     //Ligne du Bas
-    else if (numligne == 5)
+    else if (numLigne == 5)
     {
         int tmp[4]={-6,-5,0,0};
         for (int i = 0; i < 4; i++) direction[i] = tmp[i];
@@ -234,7 +234,7 @@ int* getDirection(int coordP)
 //Fonctions pour détecter les mouvements des pions
 
 int * prioMouvement(Case* Damier, int coordP)
-{
+{/*
     Case piece = Damier[coordP];
 
     if (siEnnemieVoisin(Damier, coordP) != NULL)
@@ -248,55 +248,9 @@ int * prioMouvement(Case* Damier, int coordP)
     else
     {
         return
-    }
+    }*/
 }
-/*
-//Cas de si on a au moins un jeton enemie en voisin
-void siEnnemieVoisin(Case* Damier,int coordP)
-{
-	int i;
-	Case pion = Damier[coordP];
-	//direction est le "patron" des directions autour du pion en coordP
-	int* direction = getDirection(coordP);
-	int* cheminMax = malloc(sizeof(int));
-	cheminMax[0] = 0;
 
-	//code de recherche
-	for (i = 0; i<4 ; i++)
-	{
-		int voisin = coordP + direction[i];
-		int * directVoisin = getDirection(voisin);
-		//On regarde si le pion dans la direction i est ennemie et si la case dérriére est prenable
-		if(Damier[voisin].equipe == ennemie(pion) && Damier[voisin+directVoisin[i]].equipe == 0)
-		{
-			printf("Le pion en %d est prenable\n",voisin);
-
-			Damier[coordP].etat = FALSE;
-			Damier[voisin].etat = FALSE;
-			Damier[voisin+directVoisin[i]].etat = FALSE;
-			prettyPrintPassage(Damier);
-			//Recherche recursive qui ressort le max de chaque chemin
-			int* chemin = exploreCheminEnnemie(Damier,1,voisin+directVoisin[i],pion.equipe);
-			// on ajoute à la sauuvegarde la coord où attéris le pion après avoir mangé
-			if (cheminMax[0] < chemin[0])
-			{
-				free(cheminMax);
-				cheminMax = chemin;
-			}
-			printf("DEBUG1 [");
-
-			for (int i=0;i<=cheminMax[0];i++)
-			{
-				printf("%d ,",cheminMax[i]);
-			}
-			printf("\b]\n");
-		}
-	}
-
-	//Si aucun voisin n'est mangeable.
-
-	//Sinon :
-}*/
 //------------------------------------------------------------------------------
 int* exploreCheminEnnemie(Case* DamierR,int compt,int coordP,int equipe)
 {
@@ -344,20 +298,19 @@ int* exploreCheminEnnemie(Case* DamierR,int compt,int coordP,int equipe)
 					free(cheminMax);
 					cheminMax = chemin;
 				}
+				/*
 				printf("DEBUG1 [");
 
 				for (int i=0;i<=cheminMax[0];i++)
 				{
 					printf("%d ,",cheminMax[i]);
 				}
-				printf("\b]\n");
+				printf("\b]\n");*/
 				/*else if (cheminMax[0] == chemin[0])
 				{
 					nbCheminEg++;
 					cheminMax[nbCheminEg] =
 				}*/
-				printf("DEBUG passageinversé\n");
-				prettyPrintPassage(DamierR);
 				//On démarque les cases que l'on viens de traverser
 				DamierR[coordP].etat = TRUE;
 				DamierR[voisin].etat = TRUE;
@@ -383,7 +336,6 @@ int* exploreCheminEnnemie(Case* DamierR,int compt,int coordP,int equipe)
 		//pion.etat = TRUE;
 		return chemin;
 	}
-
 	return cheminMax;
 }
 

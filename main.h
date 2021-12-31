@@ -41,11 +41,11 @@ void setCase			(Case* Damier,int coord,Case cNvl);
 int  ennemie			(Case pion);
 Case* cpyDamier			(Case* Damier);
 int* getDirection		(int coordP);
-int * prioMouvement(Case* Damier, int coordP)
+int * prioMouvement     (Case* Damier, int coordP);
 
 //Damiers type
 void damierType1        (Case * Damier,int tailleDamier);
-void damierType2        (Case * Damier,int tailleDamier)
+void damierType2        (Case * Damier,int tailleDamier);
 
 //==============================================================================
 int* exploreCheminEnnemie(Case* DamierR,int compt,int coordP,int equipe);
