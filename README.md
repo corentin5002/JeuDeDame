@@ -1,5 +1,17 @@
 # JeuDeDame
 
+## Idée fonction `exploreCheminEnnemie()`
+
+Cette fonction ne serait plus destinée à retourner TOUT le chemin, mais seulement les case atterrissages qui sont dans les chemins les plus longs.
+
+type de retour : int * [n,cAV1,cAV2,...,cAV4]
+
+où n est la longueur du chemin et cAVi le numéro de case d'atterrissage voisin i.
+
+On l'utiliserait en remontant le chemin, case d'atterrissage par case d'atterrissage.
+
+et à chaque fois on devrait juste demander si la case est valide pour le joueur au serveur.
+
 # Note pour git
 
 *Tes meilleurs amis*
@@ -12,7 +24,7 @@
 
 
 se connecter au dépôt :
-
+```bash
 git init
 
 git remote add origin git@github.com:corentin5002/JeuDeDame.git
@@ -28,3 +40,4 @@ git commit -m "first commit"
 git branch -M main
 git remote add origin git@github.com:corentin5002/JeuDeDame.git
 git push -u origin main
+```
