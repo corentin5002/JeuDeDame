@@ -105,7 +105,7 @@ void damierType1(Case * Damier,int tailleDamier)
 	setCase(Damier,22,caseTest);
 	setCase(Damier,11,caseTest);
 
-	printf("     Damier actuel\n");
+	printf(" Damier actuel type 1\n");
 	prettyPrintDamier(Damier);
 }
 //------------------------------------------------------------------------------
@@ -128,7 +128,7 @@ void damierType2(Case * Damier,int tailleDamier)
 	setCase(Damier,12,caseTest);
 
 
-	printf("     Damier actuel\n");
+	printf(" Damier actuel type 2\n");
 	prettyPrintDamier(Damier);
 }
 //------------------------------------------------------------------------------
@@ -151,7 +151,18 @@ void damierType3(Case * Damier,int tailleDamier)
 	setCase(Damier,12,caseTest);
 
 
-	printf("     Damier actuel\n");
+	printf(" Damier actuel type 3\n");
+	prettyPrintDamier(Damier);
+}
+//------------------------------------------------------------------------------
+void damierType4(Case * Damier,int tailleDamier)
+{
+	Case caseTest;
+    caseTest.equipe = J2;
+	caseTest.dame   = FALSE;
+	caseTest.etat   = TRUE;
+    setCase(Damier,26,caseTest);
+	printf(" Damier actuel type 3\n");
 	prettyPrintDamier(Damier);
 }
 //------------------------------------------------------------------------------
@@ -175,35 +186,35 @@ Case* cpyDamier(Case* Damier)
 	return DamierR;
 }
 //------------------------------------------------------------------------------
-int* getDirection(int coordP)
+int* direction(int coordP)
 {
 	//Determine si on est sur ligne paire ou impaire
 	int numLigne = (coordP-coordP%5)/5;
-	int* direction = malloc(4*sizeof(int));
+	int* direct = malloc(4*sizeof(int));
 
     //Coin en Haut à droite
     if (coordP == 4)
     {
         int tmp[4]={0,0,0,5};
-        for (int i = 0; i < 4; i++) direction[i] = tmp[i];
+        for (int i = 0; i < 4; i++) direct[i] = tmp[i];
     }
     //Coin en Bas à gauche
     else if (coordP == 45)
     {
         int tmp[4]={0,-5,0,0};
-        for (int i = 0; i < 4; i++) direction[i] = tmp[i];
+        for (int i = 0; i < 4; i++) direct[i] = tmp[i];
     }
     //Ligne du Haut
     else if (numLigne == 0)
     {
         int tmp[4]={0,0,6,5};
-        for (int i = 0; i < 4; i++) direction[i] = tmp[i];
+        for (int i = 0; i < 4; i++) direct[i] = tmp[i];
     }
     //Ligne du Bas
     else if (numLigne == 5)
     {
         int tmp[4]={-6,-5,0,0};
-        for (int i = 0; i < 4; i++) direction[i] = tmp[i];
+        for (int i = 0; i < 4; i++) direct[i] = tmp[i];
     }
     //Colonne de Droite
     else if (coordP % 10 == 4)
@@ -212,13 +223,13 @@ int* getDirection(int coordP)
         if (numLigne%2 == 0)
         {
             int tmp[4]={-5,0,0,5};
-            for (int i = 0; i < 4; i++) direction[i] = tmp[i];
+            for (int i = 0; i < 4; i++) direct[i] = tmp[i];
         }
         //Case sur les lignes impaires
         else
         {
             int tmp[4]={-6,0,0,4};
-            for (int i = 0; i < 4; i++) direction[i] = tmp[i];
+            for (int i = 0; i < 4; i++) direct[i] = tmp[i];
         }
     }
     //Colonne de Gauche
@@ -228,35 +239,47 @@ int* getDirection(int coordP)
         if (numLigne%2 == 0)
         {
             int tmp[4]={0,-4,6,0};
-            for (int i = 0; i < 4; i++) direction[i] = tmp[i];
+            for (int i = 0; i < 4; i++) direct[i] = tmp[i];
         }
         //Case sur les lignes impaires
         else
         {
             int tmp[4]={0,-5,5,0};
-            for (int i = 0; i < 4; i++) direction[i] = tmp[i];
+            for (int i = 0; i < 4; i++) direct[i] = tmp[i];
         }
     }
     //Case sur les lignes paires
 	else if (numLigne%2 == 0)
 	{
 		int tmp[4]={-5,-4,6,5};
-		for (int i = 0; i < 4; i++) direction[i] = tmp[i];
+		for (int i = 0; i < 4; i++) direct[i] = tmp[i];
 	}
     //Case sur les lignes impaires
 	else
 	{
 		int tmp[4]={-6,-5,5,4};
-		for (int i = 0; i < 4; i++) direction[i] = tmp[i];
+		for (int i = 0; i < 4; i++) direct[i] = tmp[i];
 
 	}
 
-	return direction;
+	return direct;
 }
 //------------------------------------------------------------------------------
-//Fonctions pour détecter les mouvements des pions
-
-int * prioMouvement(Case* Damier, int equipe)
+int** ajoutTabDsTab(int** Tab2D,int* tab)
+{
+    int ** nvTab2D = malloc((Tab2D[0][0]+2)*sizeof(int*));
+    for(int i=0;i<Tab2D[0][0]+1;i++)
+    {
+        nvTab2D[i] = Tab2D[i];
+    }
+    nvTab2D[Tab2D[0][0]+1] = tab;
+    nvTab2D[0][0]++;
+    return nvTab2D;
+}
+//------------------------------------------------------------------------------
+//Fonctions qui retourne la liste des cases où l'on a le droit d'aller.
+//Sous forme d'un tableau de tuple : [[depart,arrivé]]
+void prioMouvement(Case* Damier, int equipe)
 {/*
     Case piece = Damier[coordP];
 
@@ -272,6 +295,46 @@ int * prioMouvement(Case* Damier, int equipe)
     {
         return
     }*/
+    //indique si précédemment on a déjà détecté un pion mangeable
+    int test = TRUE;
+    int** PionBougeable = malloc(sizeof(int*));
+    int* tmp            = malloc(sizeof(int));
+    tmp[0] = 0;
+    PionBougeable[0] = tmp;
+
+    for(int coordP=0;coordP<50;coordP++)
+    {
+        printf("DEBUG %d \n",coordP);
+        Case pion = Damier[coordP];
+        if(pion.equipe != equipe) continue;
+        int* direct = direction(coordP);
+
+        for(int i=0;i<4;i++)
+        {
+            int voisin = coordP + direct[i];
+            int* directVoisin = direction(voisin);
+
+            if(Damier[voisin].equipe == ennemie(pion) && Damier[voisin+directVoisin[i]].equipe == CASE)
+            {
+                test = FALSE;
+                printf("Ce pion peut manger : %d\n",coordP);
+
+            }
+            else if(test && equipe == J1)
+            {
+                if     ((i==0 || i==1) && Damier[voisin].equipe==CASE)
+                {
+                    //ajout de [coordP,voisin] dans PionBougeable
+                    printf("Ce pion %d -> %d\n",coordP,voisin);
+                }
+                else if((i==2 || i==3) && Damier[voisin].equipe==CASE)
+                {
+                    //ajout de [coordP,voisin] dans PionBougeable
+                    printf("Ce pion %d -> %d\n",coordP,voisin);
+                }
+            }
+        }
+    }
 }
 
 //------------------------------------------------------------------------------
@@ -281,7 +344,7 @@ int* exploreCheminEnnemie(Case* DamierR,int compt,int coordP,int equipe)
 	int test = TRUE;
 	Case pion = DamierR[coordP];
 	//On récupère les mouvements possibles pour le pion actuel
-	int* direction = getDirection(coordP);
+	int* direct = direction(coordP);
 	int* cheminMax = malloc(5*sizeof(int));
 	cheminMax[0] = 0;
 	pion.equipe = equipe;
@@ -290,9 +353,9 @@ int* exploreCheminEnnemie(Case* DamierR,int compt,int coordP,int equipe)
 	for(int i=0;i<4;i++)
 	{
 		//On prend un voisin de coorP
-		int voisin = coordP + direction[i];
+		int voisin = coordP + direct[i];
 		//On recupère les mouvements qu'ils a le droit de faire.
-		int * directVoisin = getDirection(voisin);
+		int * directVoisin = direction(voisin);
 		//printf("coordP %d et voisin regardé : %d \n", coordP,voisin);
 
 		//On regarde si le pion dans la direction i est ennemie et si la case dérriére est prenable
@@ -366,14 +429,8 @@ int main()
     Case* Damier = genJeu(50);
 	int* chemin;
     bougerPiece(Damier,17,22);
-	damierType3(Damier,50);
-	//siEnnemieVoisin(Damier,27);
-	chemin = exploreCheminEnnemie(Damier,0,44,Damier[44].equipe);
-
-	for(int i=0;i<5;i++ )
-	{
-		printf("%d ,",chemin[i]);
-	}
+	damierType4(Damier,50);
+    prioMouvement(Damier,J1);
 	printf("\b \n");
     return 0;
 }
