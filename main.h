@@ -33,7 +33,7 @@ void prettyPrintPassage (Case* Damier);
 void setCase			(Case* Damier,int coord,Case cNvl);
 int  ennemie			(Case pion);
 Case* cpyDamier			(Case* Damier);
-int* getDirection		(int coordP);
+int* direction		(int coordP);
 //outils pour les tableaux
 int** ajoutTab2D        (int** Tab2D,int* tab);
 void supprTab2D         (int** Tab2D);

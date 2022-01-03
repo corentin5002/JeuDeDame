@@ -28,8 +28,24 @@ Case * genJeu(int tailleDamier)
 //------------------------------------------------------------------------------
 void bougerPiece(Case* Damier,int cDepart,int cArrivee)
 {
-	Damier[cArrivee].equipe = Damier[cDepart].equipe;
-	Damier[cDepart].equipe = 0;
+	int* direct = direction(cDepart);
+	for(int i=0;i<4;i++)
+	{
+		int voisin = cDepart + direct[i];
+		int* directVoisin = direction(voisin);
+		if (cArrivee == voisin)
+		{
+			Damier[cArrivee].equipe = Damier[cDepart].equipe;
+			Damier[cDepart].equipe = CASE;
+			break;
+		}
+		else if (cArrivee == voisin + directVoisin[i])
+		{
+			Damier[cArrivee].equipe = Damier[cDepart].equipe;
+			Damier[cDepart].equipe  = CASE;
+			Damier[voisin].equipe	= CASE;
+		}
+	}
 }
 //------------------------------------------------------------------------------
 void prettyPrint(Case* Damier)
@@ -543,10 +559,7 @@ int main()
 	int* chemin;
 	//bougerPiece(Damier,17,22);
 	damierType3(Damier,50);
-	int** MouvementsJ1 = prioMouvement(Damier,J1);
-	printTab2D(MouvementsJ1,2);
-	int** MouvementsJ2 = prioMouvement(Damier,J2);
-	printTab2D(MouvementsJ2,2);
+	
 
 	return 0;
 }
