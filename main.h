@@ -34,8 +34,12 @@ void setCase			(Case* Damier,int coord,Case cNvl);
 int  ennemie			(Case pion);
 Case* cpyDamier			(Case* Damier);
 int* getDirection		(int coordP);
-int** ajoutTabDsTab     (int** Tab2D,int* tab);
-void prioMouvement     (Case* Damier, int coordP);
+//outils pour les tableaux
+int** ajoutTab2D        (int** Tab2D,int* tab);
+void supprTab2D         (int** Tab2D);
+int** genTab2D          ();
+//fonctions serveur
+int** prioMouvement     (Case* Damier, int coordP);
 
 //Damiers type
 void damierType1        (Case * Damier,int tailleDamier);

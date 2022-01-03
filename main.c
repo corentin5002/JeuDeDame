@@ -10,7 +10,6 @@ Case * genJeu(int tailleDamier)
     Case * Damier = malloc(tailleDamier*sizeof(Case));
     int i;
     //initialisation du Damier
-    printf("| ");
     for(i=0;i<tailleDamier;i++){
         if (i < 20)
         {
@@ -23,10 +22,7 @@ Case * genJeu(int tailleDamier)
         else Damier[i].equipe= CASE;
         Damier[i].dame  = FALSE;
 		Damier[i].etat 	= TRUE;
-        printf("%d ",Damier[i].equipe);
-        if (i%5 == 4) printf("|\n| ");
     }
-    printf("\b\b \n");
     return Damier;
 }
 //------------------------------------------------------------------------------
@@ -62,6 +58,37 @@ void prettyPrintDamier(Case* Damier)
         //Si la ligne est impaire
         else printf("%d   ",Damier[i].equipe);
         if (i%5 == 4) printf("|\n| ");
+    }
+    printf("\b\b");
+	printf("_______________________\n");
+
+}
+//------------------------------------------------------------------------------
+void prettyPrintDamierChiffre(Case* Damier)
+{
+	printf("\n_______________________\n");
+    printf("| ");
+    int i;
+    for(i=0;i<50;i++)
+    {
+        //on extrait le numéro de la ligne
+        int numL = (i-i%5)/5;
+        if(numL<2)
+        {
+            //Si la ligne est paire
+            if (numL%2 == 0) printf("   %d ",i);
+            //Si la ligne est impaire
+            else printf(" %d   ",i);
+            if (i%5 == 4) printf("|\n| ");
+        }
+        else
+        {
+            //Si la ligne est paire
+            if (numL%2 == 0) printf("  %d ",i);
+            //Si la ligne est impaire
+            else printf("%d   ",i);
+            if (i%5 == 4) printf("|\n| ");
+        }
     }
     printf("\b\b");
 	printf("_______________________\n");
@@ -211,7 +238,7 @@ int* direction(int coordP)
         for (int i = 0; i < 4; i++) direct[i] = tmp[i];
     }
     //Ligne du Bas
-    else if (numLigne == 5)
+    else if (numLigne == 9)
     {
         int tmp[4]={-6,-5,0,0};
         for (int i = 0; i < 4; i++) direct[i] = tmp[i];
@@ -265,7 +292,7 @@ int* direction(int coordP)
 	return direct;
 }
 //------------------------------------------------------------------------------
-int** ajoutTabDsTab(int** Tab2D,int* tab)
+int** ajoutTab2D(int** Tab2D,int* tab)
 {
     int ** nvTab2D = malloc((Tab2D[0][0]+2)*sizeof(int*));
     for(int i=0;i<Tab2D[0][0]+1;i++)
@@ -277,34 +304,46 @@ int** ajoutTabDsTab(int** Tab2D,int* tab)
     return nvTab2D;
 }
 //------------------------------------------------------------------------------
+int** genTab2D()
+{
+    int ** nvTab2D = malloc(sizeof(int*));
+    nvTab2D[0]     = malloc(sizeof(int ));
+    nvTab2D[0][0] = 0;
+    return nvTab2D;
+}
+//------------------------------------------------------------------------------
+void supprTab2D(int** Tab2D)
+{
+    for(int i=Tab2D[0][0];i>=0;i--)
+    {
+        free(Tab2D[i]);
+    }
+    free(Tab2D);
+}
+//------------------------------------------------------------------------------
+void printTab2D(int** Tab2D)
+{
+    int taille = Tab2D[0][0];
+    printf("[");
+    printf("[%d],",Tab2D[0][0]);
+    for(int i=1;i<taille+1;i++)
+    {
+        printf("[");
+        for(int j=0;j<2;j++) printf("%d,",Tab2D[i][j]);
+        printf("\b],");
+    }
+    printf("\b]\n");
+}
 //Fonctions qui retourne la liste des cases où l'on a le droit d'aller.
 //Sous forme d'un tableau de tuple : [[depart,arrivé]]
-void prioMouvement(Case* Damier, int equipe)
-{/*
-    Case piece = Damier[coordP];
-
-    if (siEnnemieVoisin(Damier, coordP) != NULL)
-    {
-        return siEnnemieVoisin(Damier, coordP);
-    }
-    else if (siAucunMouv(Damier, coordP) != NULL)
-    {
-        return {-1};
-    }
-    else
-    {
-        return
-    }*/
+int** prioMouvement(Case* Damier, int equipe)
+{
     //indique si précédemment on a déjà détecté un pion mangeable
     int test = TRUE;
-    int** PionBougeable = malloc(sizeof(int*));
-    int* tmp            = malloc(sizeof(int));
-    tmp[0] = 0;
-    PionBougeable[0] = tmp;
+    int** PionBougeable = genTab2D();
 
     for(int coordP=0;coordP<50;coordP++)
     {
-        printf("DEBUG %d \n",coordP);
         Case pion = Damier[coordP];
         if(pion.equipe != equipe) continue;
         int* direct = direction(coordP);
@@ -314,27 +353,45 @@ void prioMouvement(Case* Damier, int equipe)
             int voisin = coordP + direct[i];
             int* directVoisin = direction(voisin);
 
+            if(Damier[coordP].equipe==J2) printf("DEBUG1 %d -> %d  %d\n",coordP,voisin, directVoisin[i]);
             if(Damier[voisin].equipe == ennemie(pion) && Damier[voisin+directVoisin[i]].equipe == CASE)
             {
-                test = FALSE;
+                if (test)
+                {
+                    test = FALSE;
+                    //On réinitialise l'ancien tableau de pion bougeable si c'est le premier enemie mangeable que l'on détecte.
+                    supprTab2D(PionBougeable);
+                    PionBougeable = genTab2D();
+                }
+
                 printf("Ce pion peut manger : %d\n",coordP);
 
             }
-            else if(test && equipe == J1)
+            else if(test)
             {
-                if     ((i==0 || i==1) && Damier[voisin].equipe==CASE)
+                if(equipe == J1 && (i==0 || i==1) && Damier[voisin].equipe==CASE)
                 {
                     //ajout de [coordP,voisin] dans PionBougeable
-                    printf("Ce pion %d -> %d\n",coordP,voisin);
+                    int* tmp = malloc(sizeof(int)*2);
+                    tmp[0]=coordP;
+                    tmp[1]=voisin;
+                    PionBougeable = ajoutTab2D(PionBougeable,tmp);
+                    printf("DEBUG J1 deplacement normal\n");
+
                 }
-                else if((i==2 || i==3) && Damier[voisin].equipe==CASE)
+                else if(equipe == J2 && (i==2 || i==3) && Damier[voisin].equipe==CASE)
                 {
-                    //ajout de [coordP,voisin] dans PionBougeable
-                    printf("Ce pion %d -> %d\n",coordP,voisin);
+                    int* tmp = malloc(sizeof(int)*2);
+                    tmp[0]=coordP;
+                    tmp[1]=voisin;
+                    PionBougeable = ajoutTab2D(PionBougeable,tmp);
+                    printf("DEBUG J2 deplacement normal\n");
+
                 }
             }
         }
     }
+    return PionBougeable;
 }
 
 //------------------------------------------------------------------------------
@@ -428,9 +485,12 @@ int main()
 	//Case test = {FALSE,J1};
     Case* Damier = genJeu(50);
 	int* chemin;
-    bougerPiece(Damier,17,22);
-	damierType4(Damier,50);
-    prioMouvement(Damier,J1);
-	printf("\b \n");
+    //bougerPiece(Damier,17,22);
+	damierType2(Damier,50);
+    int** MouvementsJ1 = prioMouvement(Damier,J1);
+    printTab2D(MouvementsJ1);
+    int** MouvementsJ2 = prioMouvement(Damier,J2);
+    printTab2D(MouvementsJ2);
+
     return 0;
 }
