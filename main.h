@@ -17,9 +17,9 @@
 typedef struct Case Case;
 struct Case
 {
-    int dame  ; //Si la case contient un pion = FALSE sinon = TRUE
-    int equipe; //Si la case contient un pion du J1, du J2 ou une case vide (1,2,0)
-    int etat  ; //Marqueur pour les différentes fonctions.
+	int dame  ; //Si la case contient un pion = FALSE sinon = TRUE
+	int equipe; //Si la case contient un pion du J1, du J2 ou une case vide (1,2,0)
+	int etat  ; //Marqueur pour les différentes fonctions.
 };
 
 //FONCTIONS=====================================================================
@@ -38,6 +38,7 @@ int* getDirection		(int coordP);
 int** ajoutTab2D        (int** Tab2D,int* tab);
 void supprTab2D         (int** Tab2D);
 int** genTab2D          ();
+void printTab2D			(int** Tab2D,int taillePetitTab);
 //fonctions serveur
 int** prioMouvement     (Case* Damier, int coordP);
 
