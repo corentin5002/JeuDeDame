@@ -44,6 +44,7 @@ void bougerPiece(Case* Damier,int cDepart,int cArrivee)
 			Damier[cArrivee].equipe = Damier[cDepart].equipe;
 			Damier[cDepart].equipe  = CASE;
 			Damier[voisin].equipe	= CASE;
+			break;
 		}
 	}
 }
@@ -559,7 +560,7 @@ int main()
 	int* chemin;
 	//bougerPiece(Damier,17,22);
 	damierType3(Damier,50);
-	
+
 
 	return 0;
 }
