@@ -552,7 +552,7 @@ int* exploreCheminEnnemie(Case* DamierR,int compt,int coordP,int equipe)
 }
 
 //------------------------------------------------------------------------------
-
+/*
 int main()
 {
 	//Case test = {FALSE,J1};
@@ -564,3 +564,4 @@ int main()
 
 	return 0;
 }
+*/
