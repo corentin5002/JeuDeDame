@@ -63,9 +63,11 @@ void prettyPrint(Case* Damier)
 //------------------------------------------------------------------------------
 void prettyPrintDamier(Case* Damier)
 {
-	printf("\n_______________________\n");
-	printf("| ");
-	int i;
+	printf("\n  x 0 1 2 3 4 5 6 7 8 9");
+	printf("\ny -----------------------\n");
+	int i,compt;
+	compt=0;
+	printf("%d | ",compt++);
 	for(i=0;i<50;i++)
 	{
 		//on extrait le numéro de la ligne
@@ -74,10 +76,11 @@ void prettyPrintDamier(Case* Damier)
 		if (numL%2 == 0) printf("  %d ",Damier[i].equipe);
 		//Si la ligne est impaire
 		else printf("%d   ",Damier[i].equipe);
-		if (i%5 == 4) printf("|\n| ");
+		if (i%5 == 4 && compt<10)
+			printf("|\n%d | ",compt++);
+		else if(i%5 == 4) printf("|\n ");
 	}
-	printf("\b\b");
-	printf("_______________________\n");
+	printf("\b  -----------------------\n");
 
 }
 //------------------------------------------------------------------------------

@@ -40,7 +40,7 @@ void supprTab2D         (int** Tab2D);
 int** genTab2D          ();
 void printTab2D			(int** Tab2D,int taillePetitTab);
 //fonctions serveur
-int** prioMouvement     (Case* Damier, int coordP);
+int** prioMouvement     (Case* Damier, int equipe);
 
 //Damiers type
 void damierType1        (Case * Damier,int tailleDamier);
