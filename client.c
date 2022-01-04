@@ -21,8 +21,9 @@ int* coordAvecCase(int coordP)
 	tmp[1] = (coordP-coordP%5)/5;
 	return tmp;
 }
-void entreeJoueur(Case* Damier,int** MouvLegaux)
+int* entreeJoueur(Case* Damier,int** MouvLegaux)
 {
+	system("clear");
 	prettyPrintDamier(Damier);
 	printf("\nVoici les coups possibles :\n______________________\n");
 
@@ -32,6 +33,19 @@ void entreeJoueur(Case* Damier,int** MouvLegaux)
 		int* coordXYArr = coordAvecCase(MouvLegaux[i][1]);
 		printf("%d (%d,%d) --> (%d,%d)\n",i-1,coordXYDep[0],coordXYDep[1],coordXYArr[0],coordXYArr[1]);
 	}
+	printf("-1 Quitter la partie (abandon)\n");
+
+	int choix = 1000;
+	while(1)
+	{
+		if(choix>=-1 && choix<MouvLegaux[0][0]) break;
+		if(choix != 1000) printf("Le coup n° %d n'est pas disponible\n",choix);
+		printf("\nNuméro du coup à jouer :\n");
+		scanf("%d",&choix);
+	}
+	//printf("le choix est %d\n",choix);
+
+	return MouvLegaux[choix+1];
 }
 
 int main()
@@ -42,14 +56,15 @@ int main()
 
 	printf("Recevoir Damier et l'afficher\n");
 	Case* Damier=genJeu(50);
-	damierType2(Damier,50);
+	//damierType2(Damier,50);
 	prettyPrintDamier(Damier);
 	printf("Recevoir la liste de coups légaux et attendre l'entrée joueur\n");
 	//printf("case en [6,7] %d\n",caseAvecCoord(6,7));
 
 	int** MouvLegaux = prioMouvement(Damier,J1);
 	printTab2D(MouvLegaux,2);
-	entreeJoueur(Damier,MouvLegaux);
+	int * tmp = entreeJoueur(Damier,MouvLegaux);
+	printf("[%d,%d]\n",tmp[0],tmp[1]);
 
 	return 0;
 }
