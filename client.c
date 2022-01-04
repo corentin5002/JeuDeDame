@@ -36,10 +36,12 @@ int* entreeJoueur(Case* Damier,int** MouvLegaux)
 	printf("-1 Quitter la partie (abandon)\n");
 
 	int choix = 1000;
+	int test = FALSE;
 	while(1)
 	{
+		if(choix != 1000 && test) printf("Le coup n° %d n'est pas disponible\n",choix);
 		if(choix>=-1 && choix<MouvLegaux[0][0]) break;
-		if(choix != 1000) printf("Le coup n° %d n'est pas disponible\n",choix);
+		test = TRUE;
 		printf("\nNuméro du coup à jouer :\n");
 		scanf("%d",&choix);
 	}
