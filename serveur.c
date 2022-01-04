@@ -13,26 +13,9 @@ char * transformCoupleToChar(Case * Damier,int Couple[2])
     sprintf(v1,"%d",Couple[0]);
     sprintf(v2,"%d",Couple[1]);
 
-    int* direct = direction(Couple[0]);
-	for(int i=0;i<4;i++)
-	{
-		int voisin = Couple[0] + direct[i];
-		int* directVoisin = direction(voisin);
-		if (Couple[1] == voisin)
-		{
-            strcpy(envoie,v1);
-            strcat(envoie,"-");
-            strcat(envoie,v2);
-			break;
-		}
-		else if (Couple[1] == voisin + directVoisin[i])
-        {
-            strcpy(envoie,v1);
-            strcat(envoie,"x");
-            strcat(envoie,v2);
-			break;
-		}
-	}
+    strcpy(envoie,v1);
+    strcat(envoie,"-");
+    strcat(envoie,v2);
 
     return envoie;
 }
@@ -108,9 +91,7 @@ int * transformCharToCouple(char * ChaineChar)
     char * v1;
     char * v2;
 
-    //On cherche quel séparateur est utilisé:
-
-    //On test si le séparateur c'est '-'
+    //Le séparateur '-'
     v1 = strtok(cpyChaine,"-");
     v2 = strtok(NULL,"");
 
