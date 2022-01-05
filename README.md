@@ -8,25 +8,28 @@ ID(idClient)-SYS/GAME-...
 
 
 - SYS  à propos de la connexion etc
-	- connexion
-	- deconnection
-	- Action
-		- Connexion
-		- Authentification
-		- creation compte
-		- option game
-			1. creation  J
-			2. rejoindre J&Spec
-			3. regarder  Spec
-			4. quitter	J&Spec
+	0. connexion serv ->
+	1. déconnexion
+	2. Action
+ 		0. Authentification
+			0. compte existant idClient-SYS-200-*pseudo*
+			1. nv compte idClient-SYS-201-*pseudo*
+			2. invite idClient-SYS-202
+		1. creation compte
+		2. option game
+			0. creation  J
+			1. rejoindre J&Spec
+			2. regarder  Spec
+			3. quitter	J&Spec
 - GAME à propos du jeu
  - Couple joué
  - Abandon (mais idem que *option Game : quitter*)
 
+si soucis serv ou client renvoie "errorMsg"
+
 ### Message type serveur
 
 client(idClient)-SYS
-
 
 
 12080-SYS-22
