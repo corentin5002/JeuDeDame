@@ -17,8 +17,8 @@ ID(idClient)-SYS/GAME-...
 			2. invite idClient-SYS-202
 		1. creation compte
 		2. option game
-			0. creation  J 		idClient-SYS-220 -> idGame
-			1. rejoindre J&Spec idClient-SYS-221 -> idGame
+			0. creation  J 	   	idClient-SYS-220 -> idGame
+			1. rejoindre J  	idClient-SYS-221 -> idGame
 			2. regarder  Spec   
 			3. quitter	J&Spec	idClient
 - GAME à propos du jeu
