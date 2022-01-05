@@ -17,15 +17,17 @@ ID(idClient)-SYS/GAME-...
 			2. invite idClient-SYS-202
 		1. creation compte
 		2. option game
-			0. creation  J
-			1. rejoindre J&Spec
-			2. regarder  Spec
-			3. quitter	J&Spec
+			0. creation  J 		idClient-SYS-220 -> idGame
+			1. rejoindre J&Spec idClient-SYS-221 -> idGame
+			2. regarder  Spec   
+			3. quitter	J&Spec	idClient
 - GAME à propos du jeu
  - Couple joué
  - Abandon (mais idem que *option Game : quitter*)
 
 si soucis serv ou client renvoie "errorMsg"
+
+envoi()-> reception() -> gareTriageServ -> envoi()
 
 ### Message type serveur
 
