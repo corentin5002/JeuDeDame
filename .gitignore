@@ -1,5 +1,6 @@
 *.o
 client
 main
+msgServ
 testSizeOfTab
 testSizeOfTab.c
