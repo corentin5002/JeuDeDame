@@ -465,7 +465,157 @@ int utiliserCompte(char* compte,int mode)
 	free(fichier);
 	return 0;
 }
+//Avoir indice coordP d'une case dans Damier à partir de ses coordonnées [x,y]
+int caseAvecCoord(int x,int y)
+{
+	if((x%2 == 0 && y%2 == 1) || (x%2 == 1 && y%2 == 0))
+		return (y*5)+(x/2);
+	else return -1;
+}
+//Avoir coordonnée [x,y] d'une case à partir de son indice coordP dans Damier
+int* coordAvecCase(int coordP)
+{
+	//tableau de retour de forme : [x,y]
+	int* tmp = malloc(2*sizeof(int));
+	//Si on est sur une ligne paire
+	if (((coordP-coordP%5)/5)%2 == 0)
+		tmp[0] = (coordP*2+1)%10;
+	//Si la ligne est impaire
+	else
+		tmp[0] = (coordP*2)%10;
+	tmp[1] = (coordP-coordP%5)/5;
+	return tmp;
+}
+int* entreeJoueur(Case* Damier,int** MouvLegaux)
+{
+	system("clear");
+	prettyPrintDamier(Damier);
+	printf("\nVoici les coups possibles :\n______________________\n");
 
+	for(int i=1;i<MouvLegaux[0][0]+1;i++)
+	{
+		int* coordXYDep = coordAvecCase(MouvLegaux[i][0]);
+		int* coordXYArr = coordAvecCase(MouvLegaux[i][1]);
+		printf("%d (%d,%d) --> (%d,%d)\n",i-1,coordXYDep[0],coordXYDep[1],coordXYArr[0],coordXYArr[1]);
+	}
+	printf("-1 Quitter la partie (abandon)\n");
+
+	int choix = 1000;
+	int test = FALSE;
+	while(1)
+	{
+		if(choix>=-1 && choix<MouvLegaux[0][0]) break;
+		if(choix != 1000 && test) printf("Le coup n° %d n'est pas disponible\n",choix);
+		test = TRUE;
+		printf("\nNuméro du coup à jouer :\n");
+		scanf("%d",&choix);
+	}
+	//printf("le choix est %d\n",choix);
+
+	return MouvLegaux[choix+1];
+}
+char * transformCoupleToChar(Case * Damier,int Couple[2])
+{
+    //Sert de chaine de charactère de retour
+    char * envoie = malloc(6*sizeof(char));
+    //Sert de chaine de charctère pour les nombres
+    char v1[3]="";
+    char v2[3]="";
+
+    //Transforme un entier en charactère
+    sprintf(v1,"%d",Couple[0]);
+    sprintf(v2,"%d",Couple[1]);
+
+    strcpy(envoie,v1);
+    strcat(envoie,"-");
+    strcat(envoie,v2);
+
+    return envoie;
+}
+
+char * transformDamierToChar(Case * Damier)
+{
+    char * strDamier   = malloc(101 * sizeof(char));
+    char * caseVide    = "0";
+    char * equipe1     = "1";
+    char * equipe2     = "2";
+
+    int i = 0;
+    if(Damier[i].equipe == 1)
+    {
+        strcpy(strDamier, equipe1);
+        strcat(strDamier, "-");
+    }
+    else if(Damier[i].equipe == 2)
+    {
+        strcpy(strDamier, equipe2);
+        strcat(strDamier, "-");
+    }
+    else
+    {
+        strcpy(strDamier, caseVide);
+        strcat(strDamier, "-");
+    }
+
+    for(i = 1; i<50; i++)
+    {
+        if(Damier[i].equipe == 1)
+        {
+            strcat(strDamier,equipe1);
+            strcat(strDamier, "-");
+        }
+        else if(Damier[i].equipe == 2)
+        {
+            strcat(strDamier,equipe2);
+            strcat(strDamier, "-");
+        }
+        else
+        {
+            strcat(strDamier,caseVide);
+            strcat(strDamier, "-");
+        }
+    }
+
+    return strDamier;
+}
+
+Case * transformCharToDamier(char * ChaineChar)
+{
+    Case * Damier = genJeu(50);
+    int i = 0;
+    char separateur[] = "-";
+    char * ChaineProvisoire = strtok(ChaineChar, separateur);
+
+    while(ChaineProvisoire != NULL)
+    {
+        Damier[i].equipe = atoi(ChaineProvisoire);
+        ChaineProvisoire = strtok(NULL, separateur);
+        i++;
+    }
+
+    return Damier;
+}
+
+int * transformCharToCouple(char * ChaineChar)
+{
+    int * Couple = malloc(2 * sizeof(int));
+    char * cpyChaine = malloc(6* sizeof(char));
+    strcpy(cpyChaine, ChaineChar);
+    char * v1;
+    char * v2;
+
+    //Le séparateur '-'
+    v1 = strtok(cpyChaine,"-");
+    v2 = strtok(NULL,"");
+
+    //On obtient les 2 valeurs en Char
+    //Passage des valeurs en int
+    Couple[0] = atoi(v1);
+    Couple[1] = atoi(v2);
+
+    return Couple;
+}
+/*
 int main()
 {
 	system("clear");
@@ -478,4 +628,4 @@ int main()
 	printf("pseudo : %s\n",pseudo);
 
 	return 0;
-}
+}*/

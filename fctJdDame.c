@@ -525,16 +525,11 @@ int* exploreCheminEnnemie(Case* DamierR,int compt,int coordP,int equipe)
 				{
 					cheminMax[i+1] = -1;
 				}
-
 				//On démarque les cases que l'on viens de traverser
 				DamierR[voisin].etat = TRUE;
 				DamierR[voisin+directVoisin[i]].equipe = CASE;
 				DamierR[coordP].equipe = equipe;
-				/*
-				printf("\n%d [",i);
-				for(int j = 0;j<5;j++) printf(" %d,", cheminMax[j]);
-				printf("\b]\n");
-				*/
+
 			}
 		}
 	}

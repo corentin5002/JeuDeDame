@@ -32,4 +32,15 @@ void ajoutCompte		(FILE* fichier,char* chaine);
 void decoReco			(FILE* fichier,long curseur,char nvChar);
 int utiliserCompte		(char* compte ,int mode);
 
+//Client
+//Avoir indice coordP d'une case dans Damier à partir de ses coordonnées [x,y]
+int caseAvecCoord(int x,int y);
+//Avoir coordonnée [x,y] d'une case à partir de son indice coordP dans Damier
+int* coordAvecCase(int coordP);
+int* entreeJoueur(Case* Damier,int** MouvLegaux)
+//------------------------------------------------------------------------------
+int * transformCharToCouple(char * ChaineChar)
+Case * transformCharToDamier(char * ChaineChar)
+char * transformDamierToChar(Case * Damier)
+char * transformCoupleToChar(Case * Damier,int Couple[2])
 #endif
