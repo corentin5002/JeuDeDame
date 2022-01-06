@@ -167,6 +167,166 @@ char* authentification(char* idClient)
 	return "errorAuthentification";
 }
 
+char* creationPartie(char * idClient){
+	return "test";
+}
+char* jeuPartie(char * idClient, int equipe){
+	return "test";
+}
+char* rejoindreSession(char * idClient){
+	return "test";
+}
+char* rejoindrePartie(char * idPartie, int partie){
+	return "test";
+}
+char* regarderSession(char * idClient){
+	return "test";
+}
+char* regarderPartie(char * idPartie){
+	return "test";
+}
+
+char* optionGame(char * idClient)
+{
+	printf("Vous voulez jouer, très bien :\n");
+	printf("Que voulez vous faire ?\n");
+	printf("0.Créer une nouvelle partie,\n");
+	printf("1.Rejoindre une partie,\n");
+	printf("2.Regarder une partie en cours,\n");
+	printf("3.Quitter le jeu.\n");
+
+	int reponse = -1;
+	int cmpRep = 5;
+	scanf("%d", &reponse);
+	if((reponse >= 0 && reponse <= 3) || (cmpRep != 0))
+	{
+		printf("Veuillez mettre une instruction valide, "
+		"il vous reste %d essaie(s) avant d'être éjecté du jeu.\n", cmpRep);
+		scanf("%d", &reponse);
+		cmpRep --;
+	}
+
+	//Definition d'une chaine permettant de récuperer le retour des foctions intermédiares.
+	char * msg = malloc(sizeof(char));
+	
+	
+	switch (reponse)
+	{
+		//Créer une nouvelle partie
+		case 0:
+			strcat(msg,creationPartie(idClient));
+			if(strcmp(msg,"msgError") != 0)
+			{
+				printf("Veuillez choisir quelle couleur vous voulez jouer :\n");
+				printf("0.Blanc,\n1.Noir.\n");
+				
+				//Attente de la réponse,
+				int equipe = 0;
+				cmpRep = 5;
+				scanf("%d", &equipe);
+				while((equipe < 0 && equipe > 3) || (cmpRep != 0))
+				{
+					printf("Veuillez mettre une instruction valide, "
+					"il vous reste %d essaie(s) avant d'être éjecté du jeu.\n", cmpRep);
+					scanf("%d", &equipe);
+					cmpRep --;
+				}
+				//Si on sort car trop d'essaies, alors on sort du if pour appeler la fonction deconnexion
+				if(cmpRep == 0) break;
+				jeuPartie(idClient, equipe);
+			}
+			printf("Impossible de créer la partie, déconnection.\n");
+			deconnexion(idClient);
+			break;
+		//Rejoindre une partie
+		case 1:
+			strcat(msg,rejoindreSession(idClient));
+			//Retour de la forme 0-idClient1-1-idClient2.....
+			if(strcmp(msg,"msgError") != 0)
+			{
+				int nbPartie = 0;
+				printf("Veuillez choisir quelle partie vous voulez rejoindre :\n");
+				char * joliePrint = strtok(msg, "-");
+				while(joliePrint != NULL)
+				{
+					printf("Partie n°%s : ", joliePrint);
+					joliePrint = strtok(NULL, "-");
+					printf("Jouer avec le joueur : %s\n", joliePrint);
+					joliePrint = strtok(NULL, "-");
+					nbPartie ++;
+				}
+				
+				//Attente de la réponse,
+				int partie = 0;
+				cmpRep = 5;
+				scanf("%d", &partie);
+				while((partie >= 0 && partie <= nbPartie) || (cmpRep != 0))
+				{
+					printf("Veuillez mettre une instruction valide," 
+					"il vous reste %d essaie(s) avant d'être éjecté du jeu.\n", cmpRep);
+					scanf("%d", &partie);
+					cmpRep --;
+				}
+				if(cmpRep == 0) break;
+				rejoindrePartie(idClient, partie);
+			}
+			printf("Impossible de créer la partie, déconnection.\n");
+			deconnexion(idClient);
+			break;
+		//Regarder une partie  
+		case 2:
+			strcat(msg,rejoindreSession(idClient));
+			//Retour de la forme 0-idClienta1/idClienta2-1-idClient2.....
+			if(strcmp(msg,"msgError") != 0)
+			{
+				int nbPartie = 0;
+				printf("Veuillez choisir quelle partie vous voulez rejoindre :\n");
+				char * joliePrint = strtok(msg, "-");
+				while(joliePrint != NULL)
+				{
+					printf("Partie n°%s : ", joliePrint);
+					joliePrint = strtok(NULL, "-");
+					printf("Jouer avec le joueur : %s\n", joliePrint);
+					joliePrint = strtok(NULL, "-");
+					nbPartie ++;
+				}
+				
+				//Attente de la réponse,
+				int partie = 0;
+				cmpRep = 5;
+				scanf("%d", &partie);
+				while((partie >= 0 && partie <= nbPartie) || (cmpRep != 0))
+				{
+					printf("Veuillez mettre une instruction valide," 
+					"il vous reste %d essaie(s) avant d'être éjecté du jeu.\n", cmpRep);
+					scanf("%d", &partie);
+					cmpRep --;
+				}
+				if(cmpRep == 0) break;
+				rejoindrePartie(idClient, partie);
+			}
+			printf("Impossible de créer la partie, déconnection.\n");
+			deconnexion(idClient);
+			break;
+			break;
+		//Fin du jeu
+		default:
+			break;
+	}
+	return "yaya";
+}
+
+/*
+	creationGame   -> idClient-SYS-220
+	rejoindreLobby -> idClient-SYS-221
+		rejoindreGame ->  
+	regarderLobby  -> idClient-SYS-222
+		regarderGame  -> 
+	quitter -> Requête Identique à Déco
+*/
+
+
+
 
 int main()
 {
