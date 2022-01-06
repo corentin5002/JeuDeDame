@@ -211,8 +211,8 @@ char* optionGame(char * idClient)
 
 	//Definition d'une chaine permettant de récuperer le retour des foctions intermédiares.
 	char * msg = malloc(sizeof(char));
-	
-	
+
+
 	switch (reponse)
 	{
 		//Créer une nouvelle partie
@@ -222,7 +222,7 @@ char* optionGame(char * idClient)
 			{
 				printf("Veuillez choisir quelle couleur vous voulez jouer :\n");
 				printf("0.Blanc,\n1.Noir.\n");
-				
+
 				//Attente de la réponse,
 				int equipe = 0;
 				cmpRep = 5;
@@ -258,14 +258,14 @@ char* optionGame(char * idClient)
 					joliePrint = strtok(NULL, "-");
 					nbPartie ++;
 				}
-				
+
 				//Attente de la réponse,
 				int partie = 0;
 				cmpRep = 5;
 				scanf("%d", &partie);
 				while((partie >= 0 && partie <= nbPartie) || (cmpRep != 0))
 				{
-					printf("Veuillez mettre une instruction valide," 
+					printf("Veuillez mettre une instruction valide,"
 					"il vous reste %d essaie(s) avant d'être éjecté du jeu.\n", cmpRep);
 					scanf("%d", &partie);
 					cmpRep --;
@@ -276,7 +276,7 @@ char* optionGame(char * idClient)
 			printf("Impossible de créer la partie, déconnection.\n");
 			deconnexion(idClient);
 			break;
-		//Regarder une partie  
+		//Regarder une partie
 		case 2:
 			strcat(msg,rejoindreSession(idClient));
 			//Retour de la forme 0-idClienta1/idClienta2-1-idClient2.....
@@ -293,14 +293,14 @@ char* optionGame(char * idClient)
 					joliePrint = strtok(NULL, "-");
 					nbPartie ++;
 				}
-				
+
 				//Attente de la réponse,
 				int partie = 0;
 				cmpRep = 5;
 				scanf("%d", &partie);
 				while((partie >= 0 && partie <= nbPartie) || (cmpRep != 0))
 				{
-					printf("Veuillez mettre une instruction valide," 
+					printf("Veuillez mettre une instruction valide,"
 					"il vous reste %d essaie(s) avant d'être éjecté du jeu.\n", cmpRep);
 					scanf("%d", &partie);
 					cmpRep --;
@@ -322,9 +322,9 @@ char* optionGame(char * idClient)
 /*
 	creationGame   -> idClient-SYS-220
 	rejoindreLobby -> idClient-SYS-221
-		rejoindreGame ->  
+		rejoindreGame ->
 	regarderLobby  -> idClient-SYS-222
-		regarderGame  -> 
+		regarderGame  ->
 	quitter -> Requête Identique à Déco
 */
 
