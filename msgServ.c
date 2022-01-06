@@ -201,7 +201,7 @@ char* optionGame(char * idClient)
 	int reponse = -1;
 	int cmpRep = 5;
 	scanf("%d", &reponse);
-	if((reponse >= 0 && reponse <= 3) || (cmpRep != 0))
+	while((reponse >= 0 && reponse <= 3) || (cmpRep != 0))
 	{
 		printf("Veuillez mettre une instruction valide, "
 		"il vous reste %d essaie(s) avant d'être éjecté du jeu.\n", cmpRep);
@@ -279,7 +279,7 @@ char* optionGame(char * idClient)
 		//Regarder une partie  
 		case 2:
 			strcat(msg,rejoindreSession(idClient));
-			//Retour de la forme 0-idClienta1/idClienta2-1-idClient2.....
+			//Retour de la forme 0-idClienta1/idClienta2-1-idClientb1/idClientb2.....
 			if(strcmp(msg,"msgError") != 0)
 			{
 				int nbPartie = 0;
@@ -311,9 +311,10 @@ char* optionGame(char * idClient)
 			printf("Impossible de créer la partie, déconnection.\n");
 			deconnexion(idClient);
 			break;
-			break;
 		//Fin du jeu
 		default:
+			printf("Vous quitter le jeu, merci d'avoir jouer.\n");
+			deconnexion(idClient);
 			break;
 	}
 	return "yaya";
