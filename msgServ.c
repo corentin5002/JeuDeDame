@@ -5,9 +5,6 @@
 #define TRUE 1
 #define FALSE 0
 
-#define NOMBRE_PARTIE "200"
-#define TAILLE_NBPARTIE strlen(NOMBRE_PARTIE)
-
 char* triageArrivee(char* msgRecu);
 //retourne la
 char* envoie(char* msg)
@@ -16,8 +13,7 @@ char* envoie(char* msg)
 	//Magie vaudou
 
 	//envoie de msg
-	return "test-test/test-test-test-test";
-	//triageArrivee(msg);
+	return triageArrivee(msg);
 	//attente msg de reception
 }
 /*//envoie pour test authentification
@@ -56,13 +52,12 @@ char* connexion()
 	return idClient;
 }
 
-void deconnexion(char* idClient)
+char* deconnexion(char* idClient)
 {
 	char* msg = strcat(idClient,"-SYS-1");
 	envoie(msg); //renvoie
 
-	printf("RIP\n");
-
+	return "yaya2";
 }
 
 char* authentification(char* idClient)
@@ -175,149 +170,26 @@ char* authentification(char* idClient)
 	return "errorAuthentification";
 }
 
-/*
-	attenteJoueur    -> idClient-SYS-220
-	rejoindreSession -> idClient-SYS-221
-		rejoindreGame  ->
-	regarderSession  -> idClient-SYS-222
-		regarderGame   ->
-	quitter          -> Requête Identique à Déco
-*/
-
-char* attenteJoueur(char * idClient){
-	//Envoie du message pour une mise en attente d'un autre joueur;
-
-	//Message interpreté côté serveur;
-	char * messServeur = "-SYS-220";
-	//Obtention des tailles des différentes chaines;
-	int taille_idClient      = strlen(idClient);
-	int taille_messServeur   = strlen(messServeur);
-	//Taille du message à envoyer;
-	int taille_message = taille_idClient + taille_messServeur;
-
-	//Forme du message à envoyer : idClient-SYS-220
-	char * message = malloc(taille_message * sizeof(char));
-
-	strcpy(message, idClient);
-	strcat(message, messServeur);
-
-	printf("Le message est : %s\n", message);
-
-	message = envoie(message);
-
-	return message;
-
+char* creationPartie(char * idClient){
+	return "test";
 }
-
-void jeuPartie(char * idClient, int equipe){
-	//Forme du message à envoyer : idClient-GAME-information
-
-	//return "test";
+char* jeuPartie(char * idClient, int equipe){
+	return "test";
 }
-
 char* rejoindreSession(char * idClient){
-	//Envoie du message pour obtenir liste des parties à rejoindre;
-
-	//Message interpreté côté serveur;
-	char * messServeur = "-SYS-2210";
-	//Obtention des tailles des différentes chaines;
-	int taille_idClient      = strlen(idClient);
-	int taille_messServeur   = strlen(messServeur);
-	//Taille du message à envoyer;
-	int taille_message = taille_idClient + taille_messServeur;
-
-	//Forme du message à envoyer : idClient-SYS-2210
-	char * message = malloc(taille_message * sizeof(char));
-
-	strcpy(message, idClient);
-	strcat(message, messServeur);
-
-	printf("Le message est : %s\n", message);
-
-	//Retour de la forme 0-idClient0-1-idClient1.....
-	message = envoie(message);
-
-	return message;
+	return "test";
 }
-
-void rejoindrePartie(char * idClient, int partie){
-	//Message interpreté côté serveur;
-	char * messServeur = "-SYS-2211-";
-	//Obtention des tailles des différentes chaines;
-	int taille_idClient      = strlen(idClient);
-	int taille_messServeur   = strlen(messServeur);
-	//Taille du message à envoyer;
-	int taille_message = taille_idClient + taille_messServeur + TAILLE_NBPARTIE;
-
-	//Transformation du int en char pour le numéro de partie;
-	char * numPartie = malloc(TAILLE_NBPARTIE * sizeof(char));
-	sprintf(numPartie,"%d",partie);
-
-	//Forme du message à envoyer : idClient-SYS-2211-numPartie
-	char * message = malloc(taille_message * sizeof(char));
-
-	strcpy(message, idClient);
-	strcat(message, messServeur);
-	strcat(message, numPartie);
-
-	printf("Le message est : %s\n", message);
-
-	message = envoie(message);
-
+char* rejoindrePartie(char * idPartie, int partie){
+	return "test";
 }
-
 char* regarderSession(char * idClient){
-	//Envoie du message pour obtenir liste des parties en cours;
-
-	//Message interpreté côté serveur;
-	char * messServeur = "-SYS-2220";
-	//Obtention des tailles des différentes chaines;
-	int taille_idClient      = strlen(idClient);
-	int taille_messServeur   = strlen(messServeur);
-	//Taille du message à envoyer;
-	int taille_message = taille_idClient + taille_messServeur;
-
-	//Forme du message à envoyer : idClient-SYS-2221-numPartie
-	char * message = malloc(taille_message * sizeof(char));
-
-	strcpy(message, idClient);
-	strcat(message, messServeur);
-
-	printf("Le message est : %s\n", message);
-
-	//Retour de la forme 0-idClienta0/idClientb0-1-idClienta1/idClientb1.....
-	message = envoie(message);
-
-	return message;
+	return "test";
+}
+char* regarderPartie(char * idPartie){
+	return "test";
 }
 
-void regarderPartie(char * idClient, int partie){
-	//Message interpreté côté serveur;
-	char * messServeur = "-SYS-2221-";
-	//Obtention des tailles des différentes chaines;
-	int taille_idClient      = strlen(idClient);
-	int taille_messServeur   = strlen(messServeur);
-	//Taille du message à envoyer;
-	int taille_message = taille_idClient + taille_messServeur + TAILLE_NBPARTIE;
-
-	//Transformation du int en char pour le numéro de partie;
-	char * numPartie = malloc(TAILLE_NBPARTIE * sizeof(char));
-	sprintf(numPartie,"%d",partie);
-
-	//Forme du message à envoyer : idClient-SYS-2221-numPartie
-	char * message = malloc(taille_message * sizeof(char));
-
-	strcpy(message, idClient);
-	strcat(message, messServeur);
-	strcat(message, numPartie);
-
-	printf("Le message est : %s\n", message);
-
-	message = envoie(message);
-
-}
-
-void optionGame(char * idClient)
+char* optionGame(char * idClient)
 {
 	printf("Vous voulez jouer, très bien :\n");
 	printf("Que voulez vous faire ?\n");
@@ -329,7 +201,7 @@ void optionGame(char * idClient)
 	int reponse = -1;
 	int cmpRep = 5;
 	scanf("%d", &reponse);
-	while((reponse < 0 || reponse > 3) && (cmpRep >= 0))
+	while((reponse >= 0 && reponse <= 3) || (cmpRep != 0))
 	{
 		printf("Veuillez mettre une instruction valide, "
 		"il vous reste %d essaie(s) avant d'être éjecté du jeu.\n", cmpRep);
@@ -340,11 +212,12 @@ void optionGame(char * idClient)
 	//Definition d'une chaine permettant de récuperer le retour des foctions intermédiares.
 	char * msg = malloc(sizeof(char));
 
+
 	switch (reponse)
 	{
 		//Créer une nouvelle partie
 		case 0:
-			strcat(msg,attenteJoueur(idClient));
+			strcat(msg,creationPartie(idClient));
 			if(strcmp(msg,"msgError") != 0)
 			{
 				printf("Veuillez choisir quelle couleur vous voulez jouer :\n");
@@ -354,7 +227,7 @@ void optionGame(char * idClient)
 				int equipe = 0;
 				cmpRep = 5;
 				scanf("%d", &equipe);
-				while((reponse < 0 || reponse > 3) && (cmpRep >= 0))
+				while((equipe < 0 && equipe > 3) || (cmpRep != 0))
 				{
 					printf("Veuillez mettre une instruction valide, "
 					"il vous reste %d essaie(s) avant d'être éjecté du jeu.\n", cmpRep);
@@ -365,16 +238,13 @@ void optionGame(char * idClient)
 				if(cmpRep == 0) break;
 				jeuPartie(idClient, equipe);
 			}
-			else
-			{
-				printf("Impossible de créer la partie, déconnection.\n");
-			}
+			printf("Impossible de créer la partie, déconnection.\n");
 			deconnexion(idClient);
 			break;
 		//Rejoindre une partie
 		case 1:
 			strcat(msg,rejoindreSession(idClient));
-			//Retour de la forme 0-idClient0-1-idClient1.....
+			//Retour de la forme 0-idClient1-1-idClient2.....
 			if(strcmp(msg,"msgError") != 0)
 			{
 				int nbPartie = 0;
@@ -382,39 +252,34 @@ void optionGame(char * idClient)
 				char * joliePrint = strtok(msg, "-");
 				while(joliePrint != NULL)
 				{
-					printf("Partie n°%d : ", nbPartie);
+					printf("Partie n°%s : ", joliePrint);
+					joliePrint = strtok(NULL, "-");
 					printf("Jouer avec le joueur : %s\n", joliePrint);
 					joliePrint = strtok(NULL, "-");
 					nbPartie ++;
 				}
-				//On compte une fois de trop, donc on décrémente;
-				nbPartie --;
+
 				//Attente de la réponse,
 				int partie = 0;
 				cmpRep = 5;
 				scanf("%d", &partie);
-				while((partie < 0 || partie > nbPartie) && (cmpRep >= 0))
+				while((partie >= 0 && partie <= nbPartie) || (cmpRep != 0))
 				{
 					printf("Veuillez mettre une instruction valide,"
 					"il vous reste %d essaie(s) avant d'être éjecté du jeu.\n", cmpRep);
 					scanf("%d", &partie);
 					cmpRep --;
 				}
-				if(cmpRep >= 0)
-				{
-					rejoindrePartie(idClient, partie);
-				}
+				if(cmpRep == 0) break;
+				rejoindrePartie(idClient, partie);
 			}
-			else
-			{
-				printf("Impossible de créer la partie, déconnection.\n");
-			}
+			printf("Impossible de créer la partie, déconnection.\n");
 			deconnexion(idClient);
 			break;
 		//Regarder une partie
 		case 2:
-			strcat(msg,regarderSession(idClient));
-			//Retour de la forme 0-idClienta0/idClientb0-1-idClienta1/idClientb1.....
+			strcat(msg,rejoindreSession(idClient));
+			//Retour de la forme 0-idClienta1/idClienta2-1-idClientb1/idClientb2.....
 			if(strcmp(msg,"msgError") != 0)
 			{
 				int nbPartie = 0;
@@ -422,33 +287,28 @@ void optionGame(char * idClient)
 				char * joliePrint = strtok(msg, "-");
 				while(joliePrint != NULL)
 				{
-					printf("Partie n°%d : ", nbPartie);
+					printf("Partie n°%s : ", joliePrint);
+					joliePrint = strtok(NULL, "-");
 					printf("Jouer avec le joueur : %s\n", joliePrint);
 					joliePrint = strtok(NULL, "-");
 					nbPartie ++;
 				}
-				//On compte une fois de trop, donc on décrémente;
-				nbPartie --;
+
 				//Attente de la réponse,
 				int partie = 0;
 				cmpRep = 5;
 				scanf("%d", &partie);
-				while((partie < 0 || partie > nbPartie) && (cmpRep >= 0))
+				while((partie >= 0 && partie <= nbPartie) || (cmpRep != 0))
 				{
 					printf("Veuillez mettre une instruction valide,"
 					"il vous reste %d essaie(s) avant d'être éjecté du jeu.\n", cmpRep);
 					scanf("%d", &partie);
 					cmpRep --;
 				}
-				if(cmpRep >= 0)
-				{
-					regarderPartie(idClient, partie);
-				}
+				if(cmpRep == 0) break;
+				rejoindrePartie(idClient, partie);
 			}
-			else
-			{
-				printf("Impossible de créer la partie, déconnection.\n");
-			}
+			printf("Impossible de créer la partie, déconnection.\n");
 			deconnexion(idClient);
 			break;
 		//Fin du jeu
@@ -457,7 +317,18 @@ void optionGame(char * idClient)
 			deconnexion(idClient);
 			break;
 	}
+	return "yaya";
 }
+
+/*
+	creationGame   -> idClient-SYS-220
+	rejoindreLobby -> idClient-SYS-221
+		rejoindreGame ->
+	regarderLobby  -> idClient-SYS-222
+		regarderGame  ->
+	quitter -> Requête Identique à Déco
+*/
+
 
 
 char* triageArrivee(char* msgRecu)
@@ -521,45 +392,96 @@ char* triageArrivee(char* msgRecu)
 		}
 		return msgRetour;
 	}
-
+}
+//Ajout d'une chaine de caractère à la fin du fichier.
+void ajoutCompte(FILE* fichier,char* chaine)
+{
+	fseek(fichier, 0, SEEK_END);
+	fputc('-',fichier);
+	fputs(chaine,fichier);
+	fputs("\n",fichier);
+	fseek(fichier, 0, SEEK_SET);
 }
 
-void test(char * idClient)
+void decoReco(FILE* fichier,long curseur,char nvChar)
 {
-	printf("Test autres fonctions : \n");
-	printf("-----------------------------------\n");
-	printf("Retour attenteJoueur : %s\n",attenteJoueur(idClient));
-	printf("Retour rejoindreSession : %s\n",rejoindreSession(idClient));
-	printf("Retour rejoindrePartie : ");
-	rejoindrePartie(idClient, 0);
-	printf("\n");
-	printf("Retour regarderSession : %s\n",regarderSession(idClient));
-	printf("Retour regarderPartie : ");
-	regarderPartie(idClient, 0);
-	printf("\n");
-	printf("-----------------------------------\n");
+	fseek(fichier,curseur,SEEK_SET);
+	fputc(nvChar,fichier);
+	fseek(fichier, 0, SEEK_SET);
+}
 
-	printf("\n\nTest optionJeux\n");
-	printf("-----------------------------------\n");
-	optionGame(idClient);
-	printf("-----------------------------------\n");
+int utiliserCompte(char* compte,int mode)
+{
+	FILE* fichier = fopen("comptes","r+");
+	char* buff = malloc(22*sizeof(char));
+	char* modifCompte=malloc(22*sizeof(char));
+	strcat(modifCompte,"-");
+	strcat(modifCompte,compte);
+	//Trouver un pseudo existant dans le fichier
+	if(mode == 0)
+	{
+		while(fscanf(fichier,"%s\n",buff) != -1)
+		{
+			//Si on détecte le nom dans la base de donnée
+			if(buff[0]=='-' && !strcmp(modifCompte,buff))
+			{
+				fseek(fichier,-strlen(compte)-2,SEEK_CUR);
+				decoReco(fichier,ftell(fichier),'+');
+				free(fichier);
+				return 1;
+			}
+		}
+	}
+	//Créer un nouveau compte n'existant pas dans le fichier
+	else if(mode == 1)
+	{
+		int test = 1;
+		char* enCours= malloc(sizeof(char));
+		strcat(enCours,"*");
+		strcat(enCours,compte);
+		while(fscanf(fichier,"%s\n",buff) != -1)
+		{
 
+			if(!strcmp(compte,buff))
+			{
+				//Si on détecte le nom de compte dans la BD
+				test = 0;
+				break;
+			}
+			else if(!strcmp(enCours,buff))
+			{
+				//Si on détecte le nom de compte dans la BD et qu'il est déjà connecté
+				test = 0;
+				break;
+			}
+		}
+		//Si le nom de compte n'a pas été trouvé
+		if(test)
+		{
+			printf("DEBUG %s\n",compte);
+			ajoutCompte(fichier,compte);
+			free(fichier);
+			return 1;
+		}
+	}
+	else
+	{
+		fprintf(stderr,"Erreur: mode invalide pour fonction utiliserCompte\n");
+	}
+	free(fichier);
+	return 0;
 }
 
 int main()
 {
-	/*
 	system("clear");
+	char* tmp = malloc(sizeof(char));
+	strcat(tmp,"123456");
 	//authentification(tmp);
 	char* idClient = connexion();
 
 	char* pseudo = authentification(idClient);
 	printf("pseudo : %s\n",pseudo);
-	*/
-
-	char* tmp = malloc(10* sizeof(char));
-	strcpy(tmp,"123456");
-	test(tmp);
 
 	return 0;
 }

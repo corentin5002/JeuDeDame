@@ -12,13 +12,13 @@ ID(idClient)-SYS/GAME-...
 	1. déconnexion
 	2. Action
  		0. Authentification
-			0. compte existant idClient-SYS-200-*pseudo*
-			1. nv compte idClient-SYS-201-*pseudo*
-			2. invite idClient-SYS-202
+			0. compte existant 	idClient-SYS-200-*pseudo*
+			1. nv compte 		idClient-SYS-201-*pseudo*
+			2. invite 			idClient-SYS-202
 		1. creation compte
 		2. option game
-			0. creation  J 	   	idClient-SYS-220 -> idGame
-			1. rejoindre J  	idClient-SYS-221 -> idGame
+			0. creation  J 	   	idClient-SYS-220-information-username -> idGame
+			1. rejoindre J  	idClient-SYS-2210 -> liste partie -> ...-2211 -> idGame
 			2. regarder  Spec   
 			3. quitter	J&Spec	idClient
 - GAME à propos du jeu
