@@ -4,20 +4,19 @@
 
 #define TRUE 1
 #define FALSE 0
+
+char* triageArrivee(char* msgRecu);
 //retourne la
-/*char* envoie(char* msg)
+char* envoie(char* msg)
 {
 	//socket oskour
 	//Magie vaudou
 
 	//envoie de msg
-	char* msgRecu = malloc(sizeof(char));
+	return triageArrivee(msg);
 	//attente msg de reception
-	strcat(msgRecu,"authenOui");
-
-	return msgRecu;
-}*/
-//envoie pour test authentification
+}
+/*//envoie pour test authentification
 char* envoie(char* msg)
 {
 	printf("DEBUG %s\n",msg);
@@ -34,13 +33,16 @@ char* envoie(char* msg)
 	else if(!strcmp("123456-SYS-200-eric",msg))
 		return win;
 	else return lose;
-}
+}*/
 char* connexion()
 {
 	//Reception liste username
-	char* idClient = envoie("0-SYS-0");
 
-	if(strcmp(idClient,"erreurMsg") == 0)
+	char* idClient = malloc(sizeof(char));
+	strcat(idClient,"0-SYS-0");
+	idClient = envoie(idClient);
+
+	if(!strcmp(idClient,"erreurMsg"))
 	{
 		//char tmp = malloc(sizeof(char));
 		return "erreurMsg";
@@ -53,7 +55,8 @@ char* connexion()
 char* deconnexion(char* idClient)
 {
 	char* msg = strcat(idClient,"-SYS-1");
-	envoie(msg);
+	envoie(msg); //renvoie
+
 	return "yaya2";
 }
 
@@ -64,7 +67,7 @@ char* authentification(char* idClient)
 	strcat(msg,idClient);
 	strcat(msg,"-SYS-20");
 	msg = envoie(msg);
-	
+
 	if(strcmp(msg,"authenOui") == 0)
 	{
 		//printf("DEBUG \n");
@@ -86,7 +89,7 @@ char* authentification(char* idClient)
 				if(choix>=0 && choix<3) break;
 				if(choix != 1000 && test)
 				{
-					//system("clear");
+					system("clear");
 					printf("L'option n° %d n'est pas disponible\n",choix);
 					printf(	"Vous voulez :\n"
 							""
@@ -102,7 +105,6 @@ char* authentification(char* idClient)
 			switch (choix) {
 				case 0:
 					//Compte existant
-					printf("DEBUG \n");
 					while(1)
 					{
 						if(strcmp(msg,"succes") == 0) break;
@@ -133,6 +135,7 @@ char* authentification(char* idClient)
 						if(strcmp(msg,"succes") == 0) break;
 						if(strcmp("erreurPseudo",msg) == 0)
 						{
+							//system("clear");
 							printf("Le pseudo '%s' existe déjà, réessayez\n"
 									"ou tapez '0' pour retourner à l'étape précédente\n",pseudo);
 						}
@@ -327,11 +330,80 @@ char* optionGame(char * idClient)
 
 
 
+char* triageArrivee(char* msgRecu)
+{
+	char* idClient = strtok(msgRecu,"-");
+	char* type = strtok(NULL,"-");
+	char* code = strtok(NULL,"-");
+	char* msgRetour = malloc(sizeof(char));
+
+	//Connexion ou déconnexion
+	if(!strcmp(idClient,"0") || !strcmp(code,"1"))
+	{
+		//Si on demande à se connecter
+		if(!strcmp(code,"0"))
+		{
+			//récupérer son IdClient et lui envoyé
+			char* tmp = malloc(sizeof(char));
+			if(0) strcat(tmp,"erreurMsg");
+			else strcat(tmp,"123456");
+			return tmp;
+		}
+		//Sinon c'est qu'on veut se déconnecter
+		else
+		{
+			printf("On quitte le serveur et on signale que notre idClient est libre\n");
+			return NULL;
+		}
+	}
+	else
+	{
+		if(!strcmp(type,"SYS"))
+		{
+			int intCode = atoi(code);
+			char* pseudo = strtok(NULL,"-");
+			switch (intCode) {
+				case 20:
+					//Verif si l'authentification est possible (useless ?)
+					printf("Test authentification possible\n\n");
+					strcat(msgRetour,"authenOui");
+					break;
+				case 200:
+					//Si le pseudo existe dans la BD
+					if(1) strcat(msgRetour,"succes");
+					//Sinon
+					else strcat(msgRetour,"erreurPseudo");
+					break;
+				case 201:
+					//Si le pseudo n'est pas dans la BD
+					if(1) strcat(msgRetour,"succes");
+					//Sinon
+					else strcat(msgRetour,"erreurPseudo");
+					break;
+				case 202:
+					//Retourne un pseudo généré aléatoirement
+					strcat(msgRetour,"guest");
+					strcat(msgRetour,"####");
+					break;
+				default:
+					break;
+			}
+		}
+		return msgRetour;
+	}
+
+}
 
 int main()
 {
+	system("clear");
 	char* tmp = malloc(sizeof(char));
 	strcat(tmp,"123456");
-	authentification(tmp);
+	//authentification(tmp);
+	char* idClient = connexion();
+
+	char* pseudo = authentification(idClient);
+	printf("pseudo : %s\n",pseudo);
+
 	return 0;
 }
