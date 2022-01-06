@@ -1,11 +1,5 @@
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
+#include "fctReseau.h"
 
-#define TRUE 1
-#define FALSE 0
-
-char* triageArrivee(char* msgRecu);
 //retourne la
 char* envoie(char* msg)
 {

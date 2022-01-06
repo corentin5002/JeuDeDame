@@ -1,5 +1,5 @@
-#ifndef MAIN_H
-#define MAIN_H
+#ifndef JDDAME_H
+#define JDDAME_H
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -25,33 +25,43 @@ struct Case
 //FONCTIONS=====================================================================
 
 //outils
+//Créer le damier
 Case * genJeu			(int tailleDamier);
-void bougerPiece		(Case* Damier,int cDepart,int cArrivee);
-void prettyPrint		(Case* Damier);
-void prettyPrintDamier	(Case* Damier);
-void prettyPrintPassage (Case* Damier);
+//Set une case du damier
 void setCase			(Case* Damier,int coord,Case cNvl);
+//Gère le mouvement d'un pion (soit vers l'avant sur case vide, soit mange un pion)
+void bougerPiece		(Case* Damier,int cDepart,int cArrivee);
+//Affiche le damier dans le terminal
+void prettyPrintDamier	(Case* Damier);
+//Retourne l'equipe ennemie du pion
 int  ennemie			(Case pion);
-Case* cpyDamier			(Case* Damier);
-int* direction		(int coordP);
-//outils pour les tableaux
-int** ajoutTab2D        (int** Tab2D,int* tab);
-void supprTab2D         (int** Tab2D);
-int** genTab2D          ();
-void printTab2D			(int** Tab2D,int taillePetitTab);
-//fonctions serveur
+//Retourne un tableau de taille 4 donnant les adresses relatives des cases voisines du pion en coordP
+int* direction			(int coordP);
+//Retourne les coups autorisés au débuts du tour du joueur
 int** prioMouvement     (Case* Damier, int equipe);
+//Retourne les voisins de la case en coordP qui commencent les plus longs chemins de pièces mangées.
+int* exploreCheminEnnemie(Case* DamierR,int compt,int coordP,int equipe);
+//------------------------------------------------------------------------------
+//outils pour les tableaux
+//Crée un tableau 2D d'entier de forme [[tailleTab2D],[caseDeDepart,caseArrivee],...]
+int** genTab2D          ();
+//Ajoute un tableau de int à la fin du tableau 2D (et incrémente sa taille stockée en Tab2D[0][0])
+int** ajoutTab2D        (int** Tab2D,int* tab);
 
-//Damiers type
+//Libère la mémoire prise par un tableau 2D
+void supprTab2D         (int** Tab2D);
+//Affiche un tableau d'entier 2D #DEBUG
+void printTab2D			(int** Tab2D,int taillePetitTab);
+
+
+//Damiers type et fonctions qui vont partir à la poubelle
 void damierType1        (Case * Damier,int tailleDamier);
 void damierType2        (Case * Damier,int tailleDamier);
 void damierType3        (Case * Damier,int tailleDamier);
 void damierType4        (Case * Damier,int tailleDamier);
-
-//==============================================================================
-int* exploreCheminEnnemie(Case* DamierR,int compt,int coordP,int equipe);
-//==============================================================================
-
-
+void prettyPrint		(Case* Damier);
+void prettyPrintPassage (Case* Damier);
+//Copie le damier
+Case* cpyDamier			(Case* Damier);
 //==============================================================================
 #endif
