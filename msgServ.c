@@ -392,9 +392,20 @@ char* triageArrivee(char* msgRecu)
 		}
 		return msgRetour;
 	}
-
 }
 
+char* creaGuest(int* adrNbrGuest)
+{
+	//incremente globalement le numero du guest
+	*adrNbrGuest += 1;
+	char* idGuest= malloc(sizeof(char));
+	strcat(idGuest,"Guest");
+	char* num = malloc(sizeof(char));
+	sprintf(num,"%d",*adrNbrGuest);
+	strcat(idGuest,num);
+	free(num);
+	return idGuest;
+}
 int main()
 {
 	system("clear");
