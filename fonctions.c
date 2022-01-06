@@ -1,4 +1,4 @@
-#include "fonction.h"
+#include "fonctions.h"
 
 //------------------------------------------------------------------------------
 //Fonction de génération d'un damier de taille 10x10
@@ -549,9 +549,6 @@ int* exploreCheminEnnemie(Case* DamierR,int compt,int coordP,int equipe)
 
 //==============================================================================
 //fonctions pour le reseau
-
-#include "fonction.h"
-
 //retourne la
 char* envoie(char* msg)
 {
@@ -1166,20 +1163,6 @@ int * transformCharToCouple(char * ChaineChar)
     Couple[1] = atoi(v2);
 
     return Couple;
-}
-
-int main()
-{
-	system("clear");
-	char* tmp = malloc(sizeof(char));
-	strcat(tmp,"123456");
-	//authentification(tmp);
-	char* idClient = connexion();
-
-	char* pseudo = authentification(idClient);
-	printf("pseudo : %s\n",pseudo);
-
-	return 0;
 }
 
 //==============================================================================

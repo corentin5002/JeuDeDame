@@ -1,9 +1,7 @@
 *.o
 client
 main
-client
-msgServ
-tmp
+fonctions
 testSizeOfTab
 testSizeOfTab.c
 serveur
