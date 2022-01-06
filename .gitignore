@@ -3,6 +3,7 @@ client
 main
 client
 msgServ
+tmp
 testSizeOfTab
 testSizeOfTab.c
 serveur

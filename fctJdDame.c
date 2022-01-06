@@ -1,4 +1,4 @@
-#include "main.h"
+#include "fctJdDame.h"
 
 /* VOIR "main.h" POUR COURTE DESCRIPTION DES FONCTIONS ET STRUCTURES */
 

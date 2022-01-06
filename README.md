@@ -1,5 +1,17 @@
 # JeuDeDame
 
+## Architecture des fichiers :
+
+### Exécutables:
+* client
+* serveur
+### Bibliothèques de fonctions:
+* fctJdDame.c
+	* fctJdDame.h
+* fctReseau.c
+	* fctReseau.h
+
+Où client auras besoin des deux Bibliothèques et serveur que de celle de reseau
 ## Format msg envois
 
 ### Message type client:

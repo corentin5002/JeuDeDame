@@ -2,7 +2,7 @@ all:	main client
 
 client: client.o
 	gcc -Wall -Wextra -o client client.o
-
+	rm client.o
 client.o: main.h main.c
 	gcc -c client.c
 
