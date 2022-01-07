@@ -552,7 +552,7 @@ int* exploreCheminEnnemie(Case* DamierR,int compt,int coordP,int equipe)
 //retourne la
 char * envoie(int idClient, char * message)
 {
-	char message_retour[MAX_BUFFER]="";
+	char* message_retour = malloc(sizeof(char));
 
 	//Envoi message vers le serveur
 	if( send(idClient , message , strlen(message) , 0) < 0)
@@ -690,9 +690,9 @@ char* authentification(int idClient)
 
 				case 2:
 					//compte invité*
-					char message_compte [MAX_BUFFER] = "";
-					strcat(message_compte,"SYS-202");
-					pseudo = envoie(idClient,message_compte); //retourne guest#### ex: guest2546
+					//char message_compte[MAX_BUFFER] = "";
+					//strcat(message_compte,"SYS-202");
+					pseudo = envoie(idClient,"SYS-202"); //retourne guest#### ex: guest2546
 					break;
 				default:
 					break;
@@ -741,14 +741,13 @@ char* rejoindre(int idClient){
 		//On compte une fois de trop, donc on décrémente;
 		nbPartie --;
 		//Attente de la réponse,
-		char partie = "0";
+		char partie;
 		int cmpRep  = 5;
 		scanf("%s", &partie);
 		while((partie < 0 || partie > nbPartie) && (cmpRep >= 0))
 		{
 			printf("Veuillez mettre une instruction valide,"
 			"il vous reste %d essaie(s) avant d'être éjecté du jeu.\n", cmpRep);
-			scanf("%d", &partie);
 			cmpRep --;
 		}
 		if(cmpRep >= 0)
@@ -759,10 +758,6 @@ char* rejoindre(int idClient){
 			//Récupération du joueur1 de la partie choisie;
 			char * chercheJoueur = strtok(message_sauv, "-");
 
-			while((chercheJoueur != NULL) || (strcmp(chercheJoueur,partie) == 0))
-			{
-				chercheJoueur = strtok(NULL, "-");
-			}
 
 			chercheJoueur = strtok(NULL, "-");
 
@@ -828,14 +823,10 @@ char* regarder(int idClient){
 		if(cmpRep >= 0)
 		{
 			//Message interpreté côté serveur;
-			char message_serveur = "SYS-2221-";
+			char message_serveur [MAX_BUFFER] = "SYS-2221-";
 			//Obtention du nom du joueur adverse choisie;
 			char * chercheJoueur = strtok(message_sauv, "-");
 
-			while((chercheJoueur != NULL) || (strcmp(chercheJoueur,partie) == 0))
-			{
-				chercheJoueur = strtok(NULL, "-");
-			}
 
 			chercheJoueur = strtok(NULL, "-");
 
@@ -852,6 +843,7 @@ char* regarder(int idClient){
 			// OSKOUR, FAUT FAIRE UNE BOUCLE POUR OBTENIR LA GRILLE À CHAQUE COUP !!!!!!!!
 		}
 	return 	"0";
+	}
 }
 
 void optionGame(int idClient)
@@ -896,6 +888,7 @@ void optionGame(int idClient)
 			break;
 	}
 	//ICI FAUT LA FIN :)
+
 }
 
 /*
@@ -1207,24 +1200,66 @@ Partie* genListePartie()
 	Partie* ListePartie = malloc(MAX_PARTIE*sizeof(struct Partie));
 	for(int i=0;i<MAX_PARTIE;i++)
 	{
-	    ListePartie[i].Damier = genJeu();
+		ListePartie[i].Damier = genJeu();
 		ListePartie[i].tour = 0;
-		ListePartie[i].j1	= 0;
-		ListePartie[i].j2	= 0;
+		ListePartie[i].idJ1	= 0;
+		ListePartie[i].idJ2	= 0;
+		ListePartie[i].userJ1 = malloc(sizeof(char));
+		ListePartie[i].userJ2 = malloc(sizeof(char));
 	}
 	return ListePartie;
 }
-//
+//triplette de recuperation des index dans ListePartie=========
 int indexCreerPartie(Partie* ListePartie)
 {
 	for(int i=0;i<MAX_PARTIE;i++)
 	{
-		if(ListePartie[i].j1 == 0)
+		if(ListePartie[i].idJ1 == 0)
 		return i;
 	}
 	return -1;
 }
-
+//retourne liste des slots dispo pour rejoindre une partie
+char* listePartieRejoindre(Partie* ListePartie)
+{
+	char* liste = malloc(MAX_BUFFER*sizeof(char));
+	strcpy(liste,"");
+	for(int i=0;i<MAX_PARTIE;i++)
+	{
+		if(ListePartie[i].idJ1 != 0 && ListePartie[i].idJ2 == 0)
+		{
+			strcat(liste,ListePartie[i].userJ1);
+			strcat(liste,"-");
+		}
+	}
+	//tester le retour si == "" pas de partie dispo.
+	return liste;
+}
+//Rejoindre partie complètes pour les regarder
+char* listePartieRegarder(Partie* ListePartie)
+{
+	char* liste = malloc(MAX_BUFFER*sizeof(char));
+	strcpy(liste,"");
+	for(int i=0;i<MAX_PARTIE;i++)
+	{
+		if(ListePartie[i].idJ1 != 0 && ListePartie[i].idJ2 != 0)
+		{
+			strcat(liste,ListePartie[i].userJ1);
+			strcat(liste,"-");
+		}
+	}
+	//tester le retour si == "" pas de partie complètes.
+	return liste;
+}
+int indexPartieDpPseudo(Partie* ListePartie, char* pseudo)
+{
+	for(int i=0;i<MAX_BUFFER;i++)
+	{
+	    if(!strcmp(ListePartie[i].userJ1,pseudo))
+			return i;
+	}
+}
+//Retourne le pseudo d'un guest
 char* genGuest(int* numGuest)
 {
 	*numGuest += 1;
@@ -1235,4 +1270,5 @@ char* genGuest(int* numGuest)
 	strcat(name,tmp);
 	return name;
 }
+
 //==============================================================================

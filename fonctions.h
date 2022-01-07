@@ -34,11 +34,11 @@ struct Partie
 {
 	Case * Damier; //Damier de la partie
 	int tour;	//indique qui doit jouer
-	int num; //identifiant de la partie
+	//int num; //identifiant de la partie
 	int idJ1; //contient l'idClient du joueur 1
 	char* userJ1;//""		le pseudo du joueur1
 	int idJ2; //idem 				  joueur 2
-	char* userJ12;
+	char* userJ2;
 };
 typedef struct Partie Partie;
 //Structure d'entree des arguments dans le thread_create
@@ -54,78 +54,80 @@ struct Args
 
 //outils
 //Créer le damier
-Case * genJeu			();
+Case * genJeu				();
 //Set une case du damier
-void setCase			(Case* Damier,int coord,Case cNvl);
+void setCase				(Case* Damier,int coord,Case cNvl);
 //Gère le mouvement d'un pion (soit vers l'avant sur case vide, soit mange un pion)
-void bougerPiece		(Case* Damier,int cDepart,int cArrivee);
+void bougerPiece			(Case* Damier,int cDepart,int cArrivee);
 //Affiche le damier dans le terminal
-void prettyPrintDamier	(Case* Damier);
+void prettyPrintDamier		(Case* Damier);
 //Retourne l'equipe ennemie du pion
-int  ennemie			(Case pion);
+int  ennemie				(Case pion);
 //Retourne un tableau de taille 4 donnant les adresses relatives des cases voisines du pion en coordP
-int* direction			(int coordP);
+int* direction				(int coordP);
 //Retourne les coups autorisés au débuts du tour du joueur
-int** prioMouvement     (Case* Damier, int equipe);
+int** prioMouvement     	(Case* Damier, int equipe);
 //Retourne les voisins de la case en coordP qui commencent les plus longs chemins de pièces mangées.
-int* exploreCheminEnnemie(Case* DamierR,int compt,int coordP,int equipe);
+int* exploreCheminEnnemie	(Case* DamierR,int compt,int coordP,int equipe);
 //------------------------------------------------------------------------------
 //outils pour les tableaux
 //Crée un tableau 2D d'entier de forme [[tailleTab2D],[caseDeDepart,caseArrivee],...]
-int** genTab2D          ();
+int** genTab2D          	();
 //Ajoute un tableau de int à la fin du tableau 2D (et incrémente sa taille stockée en Tab2D[0][0])
-int** ajoutTab2D        (int** Tab2D,int* tab);
+int** ajoutTab2D        	(int** Tab2D,int* tab);
 
 //Libère la mémoire prise par un tableau 2D
-void supprTab2D         (int** Tab2D);
+void supprTab2D         	(int** Tab2D);
 //Affiche un tableau d'entier 2D #DEBUG
-void printTab2D			(int** Tab2D,int taillePetitTab);
+void printTab2D				(int** Tab2D,int taillePetitTab);
 
 
 //Damiers type et fonctions qui vont partir à la poubelle
-void damierType1        (Case * Damier,int tailleDamier);
-void damierType2        (Case * Damier,int tailleDamier);
-void damierType3        (Case * Damier,int tailleDamier);
-void damierType4        (Case * Damier,int tailleDamier);
-void prettyPrint		(Case* Damier);
-void prettyPrintPassage (Case* Damier);
+void damierType1        	(Case * Damier,int tailleDamier);
+void damierType2        	(Case * Damier,int tailleDamier);
+void damierType3        	(Case * Damier,int tailleDamier);
+void damierType4        	(Case * Damier,int tailleDamier);
+void prettyPrint			(Case* Damier);
+void prettyPrintPassage 	(Case* Damier);
 //Copie le damier
-Case* cpyDamier			(Case* Damier);
+Case* cpyDamier				(Case* Damier);
 //==============================================================================
 //Fonction pour le reseau
 //Gestion des envois entre le client et le serveur
-char* triageArrivee		(char* msgRecu);
-char* optionGame		(int idClient);
+char* triageArrivee			(char* msgRecu);
+void  optionGame			(int idClient);
 
 //Gestion des fonctions SYS
-char* authentification	(int idClient);
-char* attenteJoueur 	(int idClient);
-char* jeuPartie			(int idClient, int equipe);
-char* rejoindre			(int idClient);
-char* regarder			(int idClient);
+char* authentification		(int idClient);
+char* attenteJoueur 		(int idClient);
+char* jeuPartie				(int idClient, int equipe);
+char* rejoindre				(int idClient);
+char* regarder				(int idClient);
 
 
 //Manipulation du fichier "compte"
 //Ajout d'une chaine de caractère à la fin du fichier.
-void ajoutCompte		(FILE* fichier,char* chaine);
-void decoReco			(FILE* fichier,long curseur,char nvChar);
-int utiliserCompte		(char* compte ,int mode);
+void ajoutCompte			(FILE* fichier,char* chaine);
+void decoReco				(FILE* fichier,long curseur,char nvChar);
+int utiliserCompte			(char* compte ,int mode);
 
 //Client
 //Avoir indice coordP d'une case dans Damier à partir de ses coordonnées [x,y]
-int caseAvecCoord(int x,int y);
+int caseAvecCoord			(int x,int y);
 //Avoir coordonnée [x,y] d'une case à partir de son indice coordP dans Damier
-int* coordAvecCase(int coordP);
-int* entreeJoueur(Case* Damier,int** MouvLegaux);
+int* coordAvecCase			(int coordP);
+int* entreeJoueur			(Case* Damier,int** MouvLegaux);
 //------------------------------------------------------------------------------
-int * transformCharToCouple(char * ChaineChar);
+int * transformCharToCouple	(char * ChaineChar);
 Case * transformCharToDamier(char * ChaineChar);
 char * transformDamierToChar(Case * Damier);
 char * transformCoupleToChar(Case * Damier,int Couple[2]);
 
-Partie* genListePartie();
-int indexCreerPartie(Partie* ListePartie);
-char * envoie(int idClient, char * message);
-char* genGuest(int* numGuest);
+Partie* genListePartie		();
+int indexCreerPartie		(Partie* ListePartie);
+char * envoie				(int idClient, char * message);
+char* listePartieRejoindre	(Partie* ListePartie);
+char* listePartieRegarder	(Partie* ListePartie);
+char* genGuest				(int* numGuest);
 
 #endif
