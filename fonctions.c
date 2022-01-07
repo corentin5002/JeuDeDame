@@ -3,12 +3,12 @@
 //------------------------------------------------------------------------------
 //Fonction de génération d'un damier de taille 10x10
 //Retourne un pointeur sur un tableau une dimension de 50 Case.
-Case * genJeu(int tailleDamier)
+Case * genJeu()
 {
-	Case * Damier = malloc(tailleDamier*sizeof(Case));
+	Case * Damier = malloc(50*sizeof(Case));
 	int i;
 	//initialisation du Damier
-	for(i=0;i<tailleDamier;i++){
+	for(i=0;i<50;i++){
 		if (i < 20)
 		{
 			Damier[i].equipe= J2;
@@ -605,7 +605,6 @@ char* deconnexion(char* idClient)
 
 char* authentification(char* idClient)
 {
-
 	char* msg = malloc(sizeof(char));
 	strcat(msg,idClient);
 	strcat(msg,"-SYS-20");
@@ -738,14 +737,14 @@ char* attenteJoueur(char * idClient){
 
 }
 
-void jeuPartie(char * idClient, int equipe){
+char* jeuPartie(char * idClient, int equipe){
 	//Forme du message à envoyer : idClient-GAME-information
 
 	//return "test";
 }
 
 char* rejoindreSession(char * idClient){
-	//Envoie du message pour obtenir liste des parties à rejoindre;
+	//Envoie du message pour obtenir liste des parties à genJeu();
 
 	//Message interpreté côté serveur;
 	char * messServeur = "-SYS-2210";
@@ -769,17 +768,17 @@ char* rejoindreSession(char * idClient){
 	return message;
 }
 
-void rejoindrePartie(char * idClient, int partie){
+char* rejoindrePartie(char * idClient, int partie){
 	//Message interpreté côté serveur;
 	char * messServeur = "-SYS-2211-";
 	//Obtention des tailles des différentes chaines;
 	int taille_idClient      = strlen(idClient);
 	int taille_messServeur   = strlen(messServeur);
 	//Taille du message à envoyer;
-	int taille_message = taille_idClient + taille_messServeur + TAILLE_NBPARTIE;
+	int taille_message = taille_idClient + taille_messServeur + MAX_PARTIE;
 
 	//Transformation du int en char pour le numéro de partie;
-	char * numPartie = malloc(TAILLE_NBPARTIE * sizeof(char));
+	char * numPartie = malloc(MAX_PARTIE * sizeof(char));
 	sprintf(numPartie,"%d",partie);
 
 	//Forme du message à envoyer : idClient-SYS-2211-numPartie
@@ -792,7 +791,7 @@ void rejoindrePartie(char * idClient, int partie){
 	printf("Le message est : %s\n", message);
 
 	message = envoie(message);
-
+	return "yaya";
 }
 
 char* regarderSession(char * idClient){
@@ -820,17 +819,17 @@ char* regarderSession(char * idClient){
 	return message;
 }
 
-void regarderPartie(char * idClient, int partie){
+char* regarderPartie(char * idClient, int partie){
 	//Message interpreté côté serveur;
 	char * messServeur = "-SYS-2221-";
 	//Obtention des tailles des différentes chaines;
 	int taille_idClient      = strlen(idClient);
 	int taille_messServeur   = strlen(messServeur);
 	//Taille du message à envoyer;
-	int taille_message = taille_idClient + taille_messServeur + TAILLE_NBPARTIE;
+	int taille_message = taille_idClient + taille_messServeur + MAX_PARTIE;
 
 	//Transformation du int en char pour le numéro de partie;
-	char * numPartie = malloc(TAILLE_NBPARTIE * sizeof(char));
+	char * numPartie = malloc(MAX_PARTIE * sizeof(char));
 	sprintf(numPartie,"%d",partie);
 
 	//Forme du message à envoyer : idClient-SYS-2221-numPartie
@@ -846,7 +845,7 @@ void regarderPartie(char * idClient, int partie){
 
 }
 
-void optionGame(char * idClient)
+char* optionGame(char * idClient)
 {
 	printf("Vous voulez jouer, très bien :\n");
 	printf("Que voulez vous faire ?\n");
@@ -986,6 +985,7 @@ void optionGame(char * idClient)
 			deconnexion(idClient);
 			break;
 	}
+	return "yaya";
 }
 
 /*
@@ -1255,7 +1255,7 @@ char * transformDamierToChar(Case * Damier)
 
 Case * transformCharToDamier(char * ChaineChar)
 {
-    Case * Damier = genJeu(50);
+    Case * Damier = genJeu();
     int i = 0;
     char separateur[] = "-";
     char * ChaineProvisoire = strtok(ChaineChar, separateur);
@@ -1289,15 +1289,19 @@ int * transformCharToCouple(char * ChaineChar)
 
     return Couple;
 }
+//==============================================================================
+//Gestion partie
+Partie* genListePartie()
+{
+	Partie* ListePartie = malloc(MAX_PARTIE*sizeof(struct Partie));
+	for(int i=0;i<MAX_PARTIE;i++)
+	{
+	    ListePartie[i].Damier = genJeu();
+		ListePartie[i].tour = J1;
+		ListePartie[i].j1	= 0;
+		ListePartie[i].j2	= 0;
+	}
+	return ListePartie;
+}
 
 //==============================================================================
-
-int main()
-{
-	//Case test = {FALSE,J1};
-	Case* Damier = genJeu(50);
-	int* chemin;
-	//bougerPiece(Damier,17,22);
-	damierType3(Damier,50);
-	return 0;
-}

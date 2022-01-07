@@ -12,6 +12,7 @@
 #include<unistd.h>
 #include<pthread.h>
 
+#include "fonctions.h"
 #define MAX_BUFFER 2000
 #define TAILLE_FILE 3
 //#define DEBUG 1
@@ -21,6 +22,8 @@ void *traitement_connection(void *);
 
 int main(int argc , char *argv[])
 {
+	Partie* ListePartie = genListePartie();
+
 	int socket_desc , client_sock , c , *new_sock;
 	struct sockaddr_in server , client;
 
@@ -73,9 +76,12 @@ int main(int argc , char *argv[])
 		//#endif
 		pthread_t sniffer_thread;
 		new_sock = malloc(1);
-		*new_sock = client_sock;
 
-		if( pthread_create( &sniffer_thread , NULL ,  traitement_connection , (void*) new_sock) < 0)
+		Args* argsThread = malloc(sizeof(struct Args));
+		argsThread->Lpartie = ListePartie;
+		argsThread->idClient= client_sock;
+
+		if( pthread_create( &sniffer_thread , NULL ,  traitement_connection , (void*)argsThread) < 0)
 		{
 			fprintf(stderr,"\nImpossible de créer un thread");
 			return 1;
@@ -98,9 +104,12 @@ int main(int argc , char *argv[])
 /*
  * Fonction qui traite les receptions/transmissions pour chaque client
  * */
-void *traitement_connection(void *socket_desc)
+void *traitement_connection(void *argsThread)
 {
-	int sock = *(int*)socket_desc;
+
+	int sock = 0;
+	printf("%d\n",argsThread->idClient);
+
 	int read_size;
 
 	#ifdef DEBUG
@@ -121,13 +130,13 @@ void *traitement_connection(void *socket_desc)
 		else if (read_size == 0)
 		{
 			fprintf(stdout,"Déconnection client %d\n",sock);
-			free(socket_desc);
+			free(argsThread);
 			break;
 		}
 		else if(read_size == -1)
 		{
 			fprintf(stderr,"Erreur reception\n");
-			free(socket_desc);
+			free(argsThread);
 			break;
 		}
 	}

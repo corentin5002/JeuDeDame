@@ -6,7 +6,7 @@ Client
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include <unistd.h>
-
+#include "fonctions.h"
 #define MAX_BUFFER 2000
 
 int main(int argc , char *argv[])
