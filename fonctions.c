@@ -640,22 +640,22 @@ char* authentification(int idClient)
 						printf("Rentrez votre pseudo pour le compte (max 20 caractères):");
 						scanf("%s",pseudo);
 
-						if(strcmp(pseudo,"0") == 0)
+						if(strcmp(pseudo,"-1") == 0)
 						{
 							retour = TRUE;
 							break;
 						}
 
 						char message_compte [MAX_BUFFER] = "";
-						char message_retour [MAX_BUFFER] = "";
+							char message_retour [MAX_BUFFER] = "";
 						strcat(message_compte,"SYS-200-");
 						strcat(message_compte,pseudo);
 						strcpy(message_retour,envoie(idClient,message_compte)); // retourne msg = "erreurPseudo" ou "succes"
 
 						if(strcmp(message_retour,"succes") == 0) break;
-						if(strcmp("erreurPseudo",message_retour) == 0)
+						else if(strcmp(message_retour,"erreurPseudo") == 0)
 						{
-							printf("Le pseudo '%s' n'existe pas, réessayez\n"
+							printf("\nLe pseudo '%s' n'existe pas, réessayez\n"
 									"ou tapez '0' pour retourner à l'étape précédente\n",pseudo);
 						}
 					}
@@ -664,7 +664,7 @@ char* authentification(int idClient)
 					//Créer compte
 					while(1)
 					{
-						printf("Rentrez votre pseudo pour le compte (max 20 caractères):");
+						printf("Rentrez votre pseudo pour le compte (max 20 caractères): ");
 						scanf("%s",pseudo);
 
 						if(strcmp(pseudo,"0") == 0)
@@ -675,14 +675,14 @@ char* authentification(int idClient)
 
 						char message_compte [MAX_BUFFER] = "";
 						char message_retour [MAX_BUFFER] = "";
-						strcat(message_compte,"-SYS-201-");
+						strcat(message_compte,"SYS-201-");
 						strcat(message_compte,pseudo);
 						strcpy(message_retour,envoie(idClient,message_compte)); // retourne msg = "erreurPseudo" ou "succes"
 
 						if(strcmp(message_retour,"succes") == 0) break;
-						if(strcmp("erreurPseudo",message_retour) == 0)
+						else if(strcmp(message_retour,"erreurPseudo") == 0)
 						{
-							printf("Le pseudo '%s' n'existe pas, réessayez\n"
+							printf("\nLe pseudo '%s' n'existe pas, réessayez\n"
 									"ou tapez '0' pour retourner à l'étape précédente\n",pseudo);
 						}
 					}
@@ -703,11 +703,6 @@ char* authentification(int idClient)
 	return "errorAuthentification";
 }
 
-char * jeuPartie(int idClient, int equipe){
-	//Forme du message à envoyer : idClient-GAME-information
-
-	//return "test";
-}
 
 char* rejoindre(int idClient){
 	//Envoie du message pour obtenir liste des parties à rejoindre;
@@ -715,22 +710,27 @@ char* rejoindre(int idClient){
 	//Message interpreté côté serveur;
 	char messServeur[] 				 = "SYS-2210";
 	//Message stockant le retour serveur;
-	char message_reponse[MAX_BUFFER] = "";
+	char* msgRecu = malloc(sizeof(char));
 
+	int test = TRUE;
 	//Retour de la forme 0-joueur-1-joueur.....
-	strcpy(message_reponse,envoie(idClient, messServeur));
+	strcpy(msgRecu,envoie(idClient, messServeur));
+	if(!strcmp(msgRecu,"msgError"))
+		return msgRecu;
+	printf("liste partie dispo%s\n",msgRecu);
 	//Permet d'avoir une copie du message retour;
 	//Permettra d'obtenir l'identifiant du joueur 1 :)
 	char message_sauv[MAX_BUFFER] = "";
-	strcpy(message_sauv, message_reponse);
+	char* pseudoJ1 = malloc(sizeof(char));
+	strcpy(message_sauv, msgRecu);
 
 	//On continue la fonction s'il n'y a pas de message d'erreur.
 	//Sinon on le retourne :)
-	if(strcmp(message_reponse,"msgError") != 0)
+	if(strcmp(msgRecu,"msgError") != 0)
 	{
 		int nbPartie = 0;
 		printf("Veuillez choisir quelle partie vous voulez rejoindre :\n");
-		char * joliePrint = strtok(message_reponse, "-");
+		char * joliePrint = strtok(msgRecu, "-");
 		while(joliePrint != NULL)
 		{
 			printf("Partie n°%d : ", nbPartie);
@@ -762,22 +762,27 @@ char* rejoindre(int idClient){
 			chercheJoueur = strtok(NULL, "-");
 
 			//Forme du message à envoyer : SYS-2211-joueur1
-			char * message = malloc(MAX_BUFFER * sizeof(char));
+			char message[MAX_BUFFER] = "";
 
 			strcat(message, messServeur);
 			strcat(message, chercheJoueur);
 
 			printf("Le message est : %s\n", message);
 
-			char message_recu[MAX_BUFFER] = "";
-			strcpy(message_recu,envoie(idClient, message));
-			// OSKOUR, FAUT FAIRE UNE BOUCLE POUR OBTENIR LA GRILLE À CHAQUE COUP !!!!!!!!
 
+			strcpy(pseudoJ1,envoie(idClient, message));
 		}
 	}
 	else
 	{
+		test = FALSE;
 		printf("Impossible de créer la partie, déconnection.\n");
+	}
+	if(test) return pseudoJ1;
+	else
+	{
+		free(pseudoJ1);
+		return "";
 	}
 }
 
@@ -846,7 +851,7 @@ char* regarder(int idClient){
 	}
 }
 
-void optionGame(int idClient)
+char* optionGame(int idClient)
 {
 	printf("Vous voulez jouer, très bien :\n");
 	printf("Que voulez vous faire ?\n");
@@ -855,8 +860,11 @@ void optionGame(int idClient)
 	printf("2.Regarder une partie en cours,\n");
 	printf("3.Quitter le jeu.\n");
 
+	printf("\nOption : ");
 	int reponse = -1;
 	int cmpRep = 5;
+	int test = TRUE;
+	char* pseudo = malloc(MAX_BUFFER*sizeof(char));
 	scanf("%d", &reponse);
 	while((reponse < 0 || reponse > 3) && (cmpRep >= 0))
 	{
@@ -867,17 +875,24 @@ void optionGame(int idClient)
 	}
 
 	//Definition d'une chaine permettant de récuperer le retour des foctions intermédiares.
-	char msg[MAX_BUFFER] = "";
-
 	switch (reponse)
 	{
 		//Créer une nouvelle partie
 		case 0:
-			jeuPartie(idClient, 0);
+			strcpy(pseudo,envoie(idClient,"SYS-220"));
+			if(!strcmp(pseudo,"msgError"))
+			{
+				test = FALSE;
+				printf("Il y déjà trop de parties en cours, essayez d'en rejoindre une \nou regardez en une en attendant \n");
+			}
+			//msg = succes si la partie est bien créée
 			break;
 		//Rejoindre une partie
 		case 1:
-			rejoindre(idClient);
+			strcpy(pseudo,rejoindre(idClient));
+			if(!strcmp(pseudo,"msgError"))
+				test=FALSE;
+
 			break;
 		//Regarder une partie
 		case 2:
@@ -887,8 +902,14 @@ void optionGame(int idClient)
 		default:
 			break;
 	}
-	//ICI FAUT LA FIN :)
 
+	if(test) return pseudo;
+	else
+	{
+		printf("DEBUUUUUUG\n");
+		free(pseudo);
+		return "msgError";
+	}
 }
 
 /*
@@ -899,54 +920,6 @@ void optionGame(int idClient)
 		regarderGame  ->
 	quitter -> Requête Identique à Déco
 */
-
-
-
-char* triageArrivee(char* msgRecu)
-{
-	char* type = strtok(msgRecu,"-");
-	char* code = strtok(NULL,"-");
-	char* msgRetour = malloc(sizeof(char));
-
-	//Connexion ou déconnexion
-	if(!strcmp(type,"SYS"))
-	{
-		int intCode = atoi(code);
-		char* pseudo = strtok(NULL,"-");
-		switch (intCode) {
-			case 0:
-				printf("On quitte le serveur et on signale que notre idClient est libre\n");
-				printf("retour: DECO \n");
-				break;
-			case 20:
-				//Verif si l'authentification est possible (useless ?)
-				printf("Test authentification possible\n\n");
-				strcat(msgRetour,"authenOui");
-				break;
-			case 200:
-				//Si le pseudo existe dans la BD
-				if(1) strcat(msgRetour,"succes");
-				//Sinon
-				else strcat(msgRetour,"erreurPseudo");
-				break;
-			case 201:
-				//Si le pseudo n'est pas dans la BD
-				if(1) strcat(msgRetour,"succes");
-				//Sinon
-				else strcat(msgRetour,"erreurPseudo");
-				break;
-			case 202:
-				//Retourne un pseudo généré aléatoirement
-				strcat(msgRetour,"guest");
-				strcat(msgRetour,"####");
-				break;
-			default:
-				printf("DEBUG Message inconnue (mauvais format)\n");
-				break;
-		}
-	}
-	return msgRetour;
-}
 
 //Ajout d'une chaine de caractère à la fin du fichier.
 void ajoutCompte(FILE* fichier,char* chaine)
@@ -1232,8 +1205,8 @@ char* listePartieRejoindre(Partie* ListePartie)
 			strcat(liste,"-");
 		}
 	}
-	//tester le retour si == "" pas de partie dispo.
 	return liste;
+	//Pas de partie dispo.
 }
 //Rejoindre partie complètes pour les regarder
 char* listePartieRegarder(Partie* ListePartie)

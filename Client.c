@@ -26,7 +26,7 @@ int main(int argc , char *argv[])
 	server.sin_addr.s_addr = inet_addr("127.0.0.1");
 	server.sin_family = AF_INET;
 	// On spécifie le port TCP de communication - le même pour le client et le serveur
-	server.sin_port = htons( 8888 );
+	server.sin_port = htons( 8889 );
 
 	//Connection au serveur
 	if (connect(sock , (struct sockaddr *)&server , sizeof(server)) < 0)
@@ -35,17 +35,32 @@ int main(int argc , char *argv[])
 		close(sock);
 		return 1;
 	}
-
+	char pseudo [20] = ""; char adversaire [20] = "";
+	system("clear");
 	fprintf(stdout,"Connecté\n");
 	//authentification
+	strcpy(pseudo,authentification(sock));
+	system("clear");
 	//optionJeu
+	strcpy(adversaire,optionGame(sock));
+	printf("adversaire %s\n",adversaire);
+
+	if(strcmp(adversaire,"msgError"));
+	{
+		close(sock);
+		return 0;
+	}
+	if(!strcmp(adversaire,"succes"))
+		printf("adversaire : %s\n",adversaire);
+	else
+		printf("adversaire : %s\n",adversaire);
+
+	//adversaire = "succees","userJ2","userJ1" (si pseudo est spectateur)
 	//jeu
 	//Boucle sans fin de communication vers le serveur
 	while(1)
 	{
 		char message_retour[MAX_BUFFER] = "";
-
-		strcpy(message_retour,authentification(sock));
 
 		fprintf(stdout,"Réponse du serveur: %s\n",message_retour);
 		/*

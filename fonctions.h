@@ -94,13 +94,11 @@ Case* cpyDamier				(Case* Damier);
 //==============================================================================
 //Fonction pour le reseau
 //Gestion des envois entre le client et le serveur
-char* triageArrivee			(char* msgRecu);
-void  optionGame			(int idClient);
+char*  optionGame			(int idClient);
 
 //Gestion des fonctions SYS
 char* authentification		(int idClient);
 char* attenteJoueur 		(int idClient);
-char* jeuPartie				(int idClient, int equipe);
 char* rejoindre				(int idClient);
 char* regarder				(int idClient);
 
@@ -124,7 +122,9 @@ char * transformDamierToChar(Case * Damier);
 char * transformCoupleToChar(Case * Damier,int Couple[2]);
 
 Partie* genListePartie		();
+char* listePartieRegarder	(Partie* ListePartie);
 int indexCreerPartie		(Partie* ListePartie);
+int indexPartieDpPseudo		(Partie* ListePartie, char* pseudo);
 char * envoie				(int idClient, char * message);
 char* listePartieRejoindre	(Partie* ListePartie);
 char* listePartieRegarder	(Partie* ListePartie);

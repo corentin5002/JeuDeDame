@@ -43,7 +43,7 @@ int main(int argc , char *argv[])
 	server.sin_addr.s_addr = INADDR_ANY;
   // Il faut choisir un port TCP non utilisé
 	// On spécifie le port TCP de communication - le même pour le client et le serveur
-	server.sin_port = htons( 8888 );
+	server.sin_port = htons( 8889 );
 
 	//Bind
 	if( bind(socket_desc,(struct sockaddr *)&server , sizeof(server)) < 0)
@@ -110,8 +110,8 @@ int main(int argc , char *argv[])
 void *traitement_connection(void *argsThread)
 {
 	Args* nv = argsThread;
-	int index = indexCreerPartie(nv->Lpartie);
-	Partie* Session = &nv->Lpartie[index];
+	int index;
+	Partie* Session = NULL;
 	int sock = nv->idClient;
 	char pseudo[20] = "";
 	int read_size;
@@ -125,6 +125,7 @@ void *traitement_connection(void *argsThread)
 	{
 		char msgRecu[MAX_BUFFER]="";
 
+		//while(1)
 		//Renvoi du même message
 		if ((read_size = recv(sock , msgRecu , MAX_BUFFER , 0)) > 0)
 		{
@@ -192,9 +193,45 @@ void *traitement_connection(void *argsThread)
 					//Retourne un pseudo généré aléatoirement
 					strcpy(pseudo,genGuest(nv->numGuest));
 					strcpy(msgRetour,pseudo);
-					printf("%s\n",msgRetour);
+					printf("Serveur envoie %s\n",msgRetour);
 
 					break;
+				case 220:
+					index = indexCreerPartie(nv->Lpartie);
+
+					if(index!=-1)
+					{
+						strcpy(msgRetour,"succes");
+						printf("msgRetour %s\n",msgRetour);
+
+						Session = &nv->Lpartie[index];
+					}
+					else strcpy(msgRetour,"msgError");
+					break;
+				case 2210:
+					//rejoindre -> client recup str de pseudo
+					strcpy(msgRetour,listePartieRejoindre(nv->Lpartie));
+					//Si pas de partie dispo la fonction renvoie une chaine vide
+
+					if(!strcmp(msgRetour,""))
+						strcpy(msgRetour,"msgError");
+					break;
+				case 2211:
+					//rejoindre -> client renvoie sa décision
+					index = indexPartieDpPseudo(nv->Lpartie,info);
+					Session = &nv->Lpartie[index];
+					Session->idJ2  = sock;
+					Session->userJ2= pseudo;
+					strcpy(msgRetour,Session->userJ1);
+					break;
+				case 2220:
+					//regarder -> client recup str de pseudo
+					break;
+				case 2221:
+					//regarder -> client renvoie sa décision
+					//Il faut set sa session
+					break;
+
 				default:
 					printf("DEBUG Message inconnue (mauvais format)\n");
 					break;
