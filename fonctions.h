@@ -96,23 +96,12 @@ char* triageArrivee		(char* msgRecu);
 char* optionGame		(int idClient);
 
 //Gestion des fonctions SYS
-<<<<<<< HEAD
 char* authentification	(int idClient);
 char* attenteJoueur 	(int idClient);
 char* jeuPartie			(int idClient, int equipe);
 char* rejoindre			(int idClient);
 char* regarder			(int idClient);
-=======
-char* connexion			();
-char* deconnexion		(char* idClient);
-char* authentification	(char* idClient);
-char* attenteJoueur 	(char* idClient);
-char* jeuPartie			(char* idClient, int equipe);
-char* rejoindreSession	(char* idClient);
-char* rejoindrePartie	(char* idPartie, int partie);
-char* regarderSession	(char* idClient);
-char* regarderPartie	(char* idPartie,int partie);
->>>>>>> debutReseau
+
 
 //Manipulation du fichier "compte"
 //Ajout d'une chaine de caractère à la fin du fichier.
