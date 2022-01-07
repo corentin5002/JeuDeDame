@@ -6,12 +6,17 @@
 #include <time.h>
 #include <dirent.h>
 #include <string.h>
+#include <sys/socket.h>
+#include <arpa/inet.h>
+#include <unistd.h>
+#include<pthread.h>
 //=============================================================================
 #define J1 1
 #define J2 2
 #define CASE 0
 #define TRUE  1
 #define FALSE 0
+#define MAX_BUFFER 2000
 //==============================================================================
 //structure d'une case du Damier------------------------------------------------
 typedef struct Case Case;
@@ -76,18 +81,14 @@ Case* cpyDamier			(Case* Damier);
 //Fonction pour le reseau
 //Gestion des envois entre le client et le serveur
 char* triageArrivee		(char* msgRecu);
-char* optionGame		(char* idClient);
+char* optionGame		(int idClient);
 
 //Gestion des fonctions SYS
-char* connexion			();
-char* deconnexion		(char* idClient);
-char* authentification	(char* idClient);
-char* attenteJoueur 	(char* idClient);
-char* jeuPartie			(char* idClient, int equipe);
-char* rejoindreSession	(char* idClient);
-char* rejoindrePartie	(char* idPartie, int partie);
-char* regarderSession	(char* idClient);
-char* regarderPartie	(char* idPartie);
+char* authentification	(int idClient);
+char* attenteJoueur 	(int idClient);
+char* jeuPartie			(int idClient, int equipe);
+char* rejoindre			(int idClient);
+char* regarder			(int idClient);
 
 //Manipulation du fichier "compte"
 //Ajout d'une chaine de caractère à la fin du fichier.

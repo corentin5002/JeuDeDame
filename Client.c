@@ -6,6 +6,7 @@ Client
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include <unistd.h>
+#include "fonctions.h"
 
 #define MAX_BUFFER 2000
 
@@ -42,6 +43,12 @@ int main(int argc , char *argv[])
 	//Boucle sans fin de communication vers le serveur
 	while(1)
 	{
+		char message_retour[MAX_BUFFER] = "";
+		
+		strcpy(message_retour,authentification(sock));
+
+		fprintf(stdout,"Réponse du serveur: %s\n",message_retour);
+		/*
 		char message[MAX_BUFFER]="" , server_reply[MAX_BUFFER]="";
 
 		fprintf(stdout,"Saisir message : ");
@@ -64,6 +71,7 @@ int main(int argc , char *argv[])
 		}
 
 		fprintf(stdout,"Réponse du serveur: %s\n",server_reply);
+		*/
 	}
 
 	close(sock);
