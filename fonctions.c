@@ -337,7 +337,7 @@ int** ajoutTab2D(int** Tab2D,int* tab)
 		nvTab2D[i] = Tab2D[i];
 	}
 	nvTab2D[Tab2D[0][0]+1] = tab;
-	nvTab2D[0][0]++;
+	nvTab2D[0][0]+=1;
 	return nvTab2D;
 }
 //------------------------------------------------------------------------------
