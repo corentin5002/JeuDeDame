@@ -720,22 +720,22 @@ char* attenteJoueur(char * idClient){
 	char * messServeur = "-SYS-220";
 	//Obtention des tailles des différentes chaines;
 	int taille_idClient      = strlen(idClient);
-	int taille_messServeur   = strlen(messServeur); 
+	int taille_messServeur   = strlen(messServeur);
 	//Taille du message à envoyer;
 	int taille_message = taille_idClient + taille_messServeur;
-	
+
 	//Forme du message à envoyer : idClient-SYS-220
 	char * message = malloc(taille_message * sizeof(char));
-	
+
 	strcpy(message, idClient);
 	strcat(message, messServeur);
 
 	printf("Le message est : %s\n", message);
 
 	message = envoie(message);
-	
+
 	return message;
-	
+
 }
 
 void jeuPartie(char * idClient, int equipe){
@@ -751,13 +751,13 @@ char* rejoindreSession(char * idClient){
 	char * messServeur = "-SYS-2210";
 	//Obtention des tailles des différentes chaines;
 	int taille_idClient      = strlen(idClient);
-	int taille_messServeur   = strlen(messServeur); 
+	int taille_messServeur   = strlen(messServeur);
 	//Taille du message à envoyer;
 	int taille_message = taille_idClient + taille_messServeur;
-	
+
 	//Forme du message à envoyer : idClient-SYS-2210
 	char * message = malloc(taille_message * sizeof(char));
-	
+
 	strcpy(message, idClient);
 	strcat(message, messServeur);
 
@@ -765,7 +765,7 @@ char* rejoindreSession(char * idClient){
 
 	//Retour de la forme 0-idClient0-1-idClient1.....
 	message = envoie(message);
-	
+
 	return message;
 }
 
@@ -774,17 +774,17 @@ void rejoindrePartie(char * idClient, int partie){
 	char * messServeur = "-SYS-2211-";
 	//Obtention des tailles des différentes chaines;
 	int taille_idClient      = strlen(idClient);
-	int taille_messServeur   = strlen(messServeur); 
+	int taille_messServeur   = strlen(messServeur);
 	//Taille du message à envoyer;
 	int taille_message = taille_idClient + taille_messServeur + TAILLE_NBPARTIE;
-	
+
 	//Transformation du int en char pour le numéro de partie;
 	char * numPartie = malloc(TAILLE_NBPARTIE * sizeof(char));
 	sprintf(numPartie,"%d",partie);
 
 	//Forme du message à envoyer : idClient-SYS-2211-numPartie
 	char * message = malloc(taille_message * sizeof(char));
-	
+
 	strcpy(message, idClient);
 	strcat(message, messServeur);
 	strcat(message, numPartie);
@@ -792,7 +792,7 @@ void rejoindrePartie(char * idClient, int partie){
 	printf("Le message est : %s\n", message);
 
 	message = envoie(message);
-	
+
 }
 
 char* regarderSession(char * idClient){
@@ -802,13 +802,13 @@ char* regarderSession(char * idClient){
 	char * messServeur = "-SYS-2220";
 	//Obtention des tailles des différentes chaines;
 	int taille_idClient      = strlen(idClient);
-	int taille_messServeur   = strlen(messServeur); 
+	int taille_messServeur   = strlen(messServeur);
 	//Taille du message à envoyer;
 	int taille_message = taille_idClient + taille_messServeur;
-	
+
 	//Forme du message à envoyer : idClient-SYS-2221-numPartie
 	char * message = malloc(taille_message * sizeof(char));
-	
+
 	strcpy(message, idClient);
 	strcat(message, messServeur);
 
@@ -816,7 +816,7 @@ char* regarderSession(char * idClient){
 
 	//Retour de la forme 0-idClienta0/idClientb0-1-idClienta1/idClientb1.....
 	message = envoie(message);
-	
+
 	return message;
 }
 
@@ -825,17 +825,17 @@ void regarderPartie(char * idClient, int partie){
 	char * messServeur = "-SYS-2221-";
 	//Obtention des tailles des différentes chaines;
 	int taille_idClient      = strlen(idClient);
-	int taille_messServeur   = strlen(messServeur); 
+	int taille_messServeur   = strlen(messServeur);
 	//Taille du message à envoyer;
 	int taille_message = taille_idClient + taille_messServeur + TAILLE_NBPARTIE;
-	
+
 	//Transformation du int en char pour le numéro de partie;
 	char * numPartie = malloc(TAILLE_NBPARTIE * sizeof(char));
 	sprintf(numPartie,"%d",partie);
 
 	//Forme du message à envoyer : idClient-SYS-2221-numPartie
 	char * message = malloc(taille_message * sizeof(char));
-	
+
 	strcpy(message, idClient);
 	strcat(message, messServeur);
 	strcat(message, numPartie);
@@ -843,7 +843,7 @@ void regarderPartie(char * idClient, int partie){
 	printf("Le message est : %s\n", message);
 
 	message = envoie(message);
-	
+
 }
 
 void optionGame(char * idClient)
@@ -868,7 +868,7 @@ void optionGame(char * idClient)
 
 	//Definition d'une chaine permettant de récuperer le retour des foctions intermédiares.
 	char * msg = malloc(sizeof(char));
-	
+
 	switch (reponse)
 	{
 		//Créer une nouvelle partie
@@ -878,7 +878,7 @@ void optionGame(char * idClient)
 			{
 				printf("Veuillez choisir quelle couleur vous voulez jouer :\n");
 				printf("0.Blanc,\n1.Noir.\n");
-				
+
 				//Attente de la réponse,
 				int equipe = 0;
 				cmpRep = 5;
@@ -924,7 +924,7 @@ void optionGame(char * idClient)
 				scanf("%d", &partie);
 				while((partie < 0 || partie > nbPartie) && (cmpRep >= 0))
 				{
-					printf("Veuillez mettre une instruction valide," 
+					printf("Veuillez mettre une instruction valide,"
 					"il vous reste %d essaie(s) avant d'être éjecté du jeu.\n", cmpRep);
 					scanf("%d", &partie);
 					cmpRep --;
@@ -940,10 +940,10 @@ void optionGame(char * idClient)
 			}
 			deconnexion(idClient);
 			break;
-		//Regarder une partie  
+		//Regarder une partie
 		case 2:
 			strcat(msg,regarderSession(idClient));
-			//Retour de la forme 0-idClienta0/idClientb0-1-idClienta1/idClientb1.....	
+			//Retour de la forme 0-idClienta0/idClientb0-1-idClienta1/idClientb1.....
 			if(strcmp(msg,"msgError") != 0)
 			{
 				int nbPartie = 0;
@@ -964,7 +964,7 @@ void optionGame(char * idClient)
 				scanf("%d", &partie);
 				while((partie < 0 || partie > nbPartie) && (cmpRep >= 0))
 				{
-					printf("Veuillez mettre une instruction valide," 
+					printf("Veuillez mettre une instruction valide,"
 					"il vous reste %d essaie(s) avant d'être éjecté du jeu.\n", cmpRep);
 					scanf("%d", &partie);
 					cmpRep --;
