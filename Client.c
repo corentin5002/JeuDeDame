@@ -10,7 +10,7 @@ Client
 
 int main(int argc , char *argv[])
 {
-	int sock;
+	int sock,inutile;
 	struct sockaddr_in server;
 
 	//Creation socket
@@ -26,7 +26,7 @@ int main(int argc , char *argv[])
 	server.sin_addr.s_addr = inet_addr("127.0.0.1");
 	server.sin_family = AF_INET;
 	// On spécifie le port TCP de communication - le même pour le client et le serveur
-	server.sin_port = htons( 8889 );
+	server.sin_port = htons( 8888 );
 
 	//Connection au serveur
 	if (connect(sock , (struct sockaddr *)&server , sizeof(server)) < 0)
@@ -43,19 +43,23 @@ int main(int argc , char *argv[])
 	system("clear");
 	//optionJeu
 	strcpy(adversaire,optionGame(sock));
-	printf("adversaire %s\n",adversaire);
+	printf("adversaireICI %s\n",adversaire);
 
-	if(strcmp(adversaire,"msgError"));
+	if(!strcmp(adversaire,"msgError"))
 	{
+		printf("adversaireError %s\n",adversaire);
+
 		close(sock);
 		return 0;
 	}
+	//créer game
 	if(!strcmp(adversaire,"succes"))
-		printf("adversaire : %s\n",adversaire);
+		printf("adversaireSucces : %s\n",adversaire);
 	else
-		printf("adversaire : %s\n",adversaire);
+		printf("adversaireLautre : %s\n",adversaire);
 
 	//adversaire = "succees","userJ2","userJ1" (si pseudo est spectateur)
+	scanf("%d\n",&inutile );
 	//jeu
 	//Boucle sans fin de communication vers le serveur
 	while(1)

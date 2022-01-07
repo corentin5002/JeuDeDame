@@ -43,7 +43,7 @@ int main(int argc , char *argv[])
 	server.sin_addr.s_addr = INADDR_ANY;
   // Il faut choisir un port TCP non utilisé
 	// On spécifie le port TCP de communication - le même pour le client et le serveur
-	server.sin_port = htons( 8889 );
+	server.sin_port = htons( 8888 );
 
 	//Bind
 	if( bind(socket_desc,(struct sockaddr *)&server , sizeof(server)) < 0)
@@ -68,22 +68,22 @@ int main(int argc , char *argv[])
 	fprintf(stdout,"\nEn attente de connection client...\n");
 
 	c = sizeof(struct sockaddr_in);
+	Args* argsThread = malloc(sizeof(struct Args));
+	//Partie* ListePartie = genListePartie();
+	int * tmp = malloc(sizeof(int));
+	*tmp = 0;
+	argsThread->Lpartie = genListePartie();
+	argsThread->numGuest= tmp;
 	while( (client_sock = accept(socket_desc, (struct sockaddr *)&client, (socklen_t*)&c)) )
 	{
+		argsThread->idClient= client_sock;
 		//#ifdef DEBUG
 		fprintf(stdout,"Connection acceptée - Client %d\n",client_sock);
 		//#endif
 		pthread_t sniffer_thread;
 		new_sock = malloc(1);
 
-		Args* argsThread = malloc(sizeof(struct Args));
-		Partie* ListePartie = genListePartie();
-		int * tmp = malloc(sizeof(int));
-		*tmp = 0;
-		argsThread->Lpartie = ListePartie;
-		argsThread->idClient= client_sock;
-		argsThread->numGuest= tmp;
-
+		//avant malloc ici
 		if( pthread_create( &sniffer_thread , NULL ,  traitement_connection , (void*)argsThread) < 0)
 		{
 			fprintf(stderr,"\nImpossible de créer un thread");
@@ -109,12 +109,14 @@ int main(int argc , char *argv[])
  * */
 void *traitement_connection(void *argsThread)
 {
-	Args* nv = argsThread;
+	Args* nv = (Args*)argsThread;
+	int sock = nv->idClient;
 	int index;
 	Partie* Session = NULL;
-	int sock = nv->idClient;
+	//int sock = nv->idClient;
 	char pseudo[20] = "";
 	int read_size;
+
 
 	#ifdef DEBUG
 	fprintf (stdout,"Client %d\t - connection établie\n",sock);
@@ -124,6 +126,12 @@ void *traitement_connection(void *argsThread)
 	while( 1 )
 	{
 		char msgRecu[MAX_BUFFER]="";
+
+		//Cas premier tour : la partie possède les deux joueurs
+		if(Session != NULL && Session->idJ1 != 0 && Session->idJ2 != 0 && Session->tourActu == 0)
+		{
+			printf("La partie commence !\n");
+		}
 
 		//while(1)
 		//Renvoi du même message
@@ -202,9 +210,11 @@ void *traitement_connection(void *argsThread)
 					if(index!=-1)
 					{
 						strcpy(msgRetour,"succes");
-						printf("msgRetour %s\n",msgRetour);
+						printf("msgRetour %s INDEX %d\n",msgRetour,index);
 
 						Session = &nv->Lpartie[index];
+						nv->Lpartie[index].idJ1 = sock;
+						nv->Lpartie[index].userJ1=pseudo;
 					}
 					else strcpy(msgRetour,"msgError");
 					break;
@@ -212,7 +222,7 @@ void *traitement_connection(void *argsThread)
 					//rejoindre -> client recup str de pseudo
 					strcpy(msgRetour,listePartieRejoindre(nv->Lpartie));
 					//Si pas de partie dispo la fonction renvoie une chaine vide
-
+					printf("client%d chaine parties :%s",sock,msgRetour);
 					if(!strcmp(msgRetour,""))
 						strcpy(msgRetour,"msgError");
 					break;
@@ -222,6 +232,7 @@ void *traitement_connection(void *argsThread)
 					Session = &nv->Lpartie[index];
 					Session->idJ2  = sock;
 					Session->userJ2= pseudo;
+					printf("DEBUG client%d Session : %d\n",sock,Session->idJ1);
 					strcpy(msgRetour,Session->userJ1);
 					break;
 				case 2220:
@@ -237,6 +248,8 @@ void *traitement_connection(void *argsThread)
 					break;
 			}
 		}
+		printf("Message retourné à client%d : %s\n",sock,msgRetour);
+
 		write(sock , msgRetour , strlen(msgRetour));
 	}
 	return 0;

@@ -571,24 +571,6 @@ char * envoie(int idClient, char * message)
 
 	return message_retour;
 }
-/*//envoie pour test authentification
-char* envoie(char* msg)
-{
-	printf("DEBUG %s\n",msg);
-	char* win = malloc(sizeof(char));
-	strcat(win,"succes");
-	char* lose = malloc(sizeof(char));
-	strcat(lose,"erreurPseudo");
-
-	char* auth = malloc(sizeof(char));
-	strcat(auth,"authenOui");
-
-	if (!strcmp("123456-SYS-20",msg))
-		return auth;
-	else if(!strcmp("123456-SYS-200-eric",msg))
-		return win;
-	else return lose;
-}*/
 
 char* authentification(int idClient)
 {
@@ -637,7 +619,7 @@ char* authentification(int idClient)
 					//Compte existant
 					while(1)
 					{
-						printf("Rentrez votre pseudo pour le compte (max 20 caractères):");
+						printf("Rentrez votre pseudo pour le compte (max 20 caractères): ");
 						scanf("%s",pseudo);
 
 						if(strcmp(pseudo,"-1") == 0)
@@ -954,6 +936,7 @@ int utiliserCompte(char* compte,int mode)
 			//Si on détecte le nom dans la base de donnée
 			if(buff[0]=='-' && !strcmp(modifCompte,buff))
 			{
+				printf("buffmode0 %s\n",buff);
 				fseek(fichier,-strlen(compte)-2,SEEK_CUR);
 				decoReco(fichier,ftell(fichier),'+');
 				free(fichier);
@@ -1002,6 +985,8 @@ int utiliserCompte(char* compte,int mode)
 			//Si on détecte le nom dans la base de donnée
 			if(buff[0]=='+' && !strcmp(modifCompte,buff))
 			{
+				printf("buffmode2 %s\n",buff);
+
 				fseek(fichier,-strlen(compte)-2,SEEK_CUR);
 				decoReco(fichier,ftell(fichier),'-');
 				free(fichier);
@@ -1174,11 +1159,12 @@ Partie* genListePartie()
 	for(int i=0;i<MAX_PARTIE;i++)
 	{
 		ListePartie[i].Damier = genJeu();
-		ListePartie[i].tour = 0;
-		ListePartie[i].idJ1	= 0;
+		ListePartie[i].tourActu = 0;
+		ListePartie[i].tourPrec = 0;
+		ListePartie[i].idJ1	 = 0;
 		ListePartie[i].idJ2	= 0;
-		ListePartie[i].userJ1 = malloc(sizeof(char));
-		ListePartie[i].userJ2 = malloc(sizeof(char));
+		ListePartie[i].userJ1 = malloc(21*sizeof(char));
+		ListePartie[i].userJ2 = malloc(21*sizeof(char));
 	}
 	return ListePartie;
 }
@@ -1199,8 +1185,12 @@ char* listePartieRejoindre(Partie* ListePartie)
 	strcpy(liste,"");
 	for(int i=0;i<MAX_PARTIE;i++)
 	{
+		printf("i : %d tour : %d %d\n",i,ListePartie[i].tourActu,ListePartie[i].idJ1);
+
 		if(ListePartie[i].idJ1 != 0 && ListePartie[i].idJ2 == 0)
 		{
+			printf("YOUPI TAS REUSSI \n");
+
 			strcat(liste,ListePartie[i].userJ1);
 			strcat(liste,"-");
 		}
@@ -1215,6 +1205,8 @@ char* listePartieRegarder(Partie* ListePartie)
 	strcpy(liste,"");
 	for(int i=0;i<MAX_PARTIE;i++)
 	{
+		printf("i : %d \n",i);
+
 		if(ListePartie[i].idJ1 != 0 && ListePartie[i].idJ2 != 0)
 		{
 			strcat(liste,ListePartie[i].userJ1);
