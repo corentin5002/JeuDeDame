@@ -1,7 +1,7 @@
 *.o
-client
+Client
+Serveur
 main
 fonctions
 testSizeOfTab
 testSizeOfTab.c
-serveur

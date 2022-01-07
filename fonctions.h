@@ -22,6 +22,15 @@ struct Case
 	int etat  ; //Marqueur pour les différentes fonctions.
 };
 
+//Structure d'une partie côté serveur
+typedef struct Partie Partie;
+struct Partie
+{
+	Case * Damier; //Damier de la partie
+	int num; //identifiant de la partie
+	int j1 ; //contient l'idClient du joueur 1
+	int j2 ; //idem 				  joueur 2
+};
 //FONCTIONS=====================================================================
 
 //outils

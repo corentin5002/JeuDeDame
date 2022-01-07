@@ -1,8 +1,12 @@
-all: client serveur
+all: Client Serveur
 
-client: client.o
-	gcc -Wall -Wextra -o client client.o
-	rm client.o
+Client: Client.c fonctions.o
+	gcc -o Client Client.c fonctions.o
 
+Serveur: Serveur.c fonctions.o
+	gcc -o Serveur Serveur.c fonctions.o -lpthread
+
+fonctions.o : fonctions.c fonctions.h
+	gcc -c fonctions.c
 clean:
-	rm -f fctReseau.o fctJdDame.o
+	rm -f *.o
