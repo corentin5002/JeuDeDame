@@ -550,55 +550,12 @@ int* exploreCheminEnnemie(Case* DamierR,int compt,int coordP,int equipe)
 //==============================================================================
 //fonctions pour le reseau
 //retourne la
-char* envoie(char* msg)
-{
-	//socket oskour
-	//Magie vaudou
 
-	//envoie de msg
-	return triageArrivee(msg);
-	//attente msg de reception
-}
-/*//envoie pour test authentification
-char* envoie(char* msg)
-{
-	printf("DEBUG %s\n",msg);
-	char* win = malloc(sizeof(char));
-	strcat(win,"succes");
-	char* lose = malloc(sizeof(char));
-	strcat(lose,"erreurPseudo");
-
-	char* auth = malloc(sizeof(char));
-	strcat(auth,"authenOui");
-
-	if (!strcmp("123456-SYS-20",msg))
-		return auth;
-	else if(!strcmp("123456-SYS-200-eric",msg))
-		return win;
-	else return lose;
-}*/
-char* connexion()
-{
-	//Reception liste username
-
-	char* idClient = malloc(sizeof(char));
-	strcat(idClient,"0-SYS-0");
-	idClient = envoie(idClient);
-
-	if(!strcmp(idClient,"erreurMsg"))
-	{
-		//char tmp = malloc(sizeof(char));
-		return "erreurMsg";
-	}
-	//manipulation de idClient pour garder que idClient
-
-	return idClient;
-}
 
 char* deconnexion(char* idClient)
 {
 	char* msg = strcat(idClient,"-SYS-1");
-	envoie(msg); //renvoie
+	//envoie(msg); //renvoie
 
 	return "yaya2";
 }
@@ -608,7 +565,7 @@ char* authentification(char* idClient)
 	char* msg = malloc(sizeof(char));
 	strcat(msg,idClient);
 	strcat(msg,"-SYS-20");
-	msg = envoie(msg);
+	//msg = envoie(msg);
 
 	if(strcmp(msg,"authenOui") == 0)
 	{
@@ -667,7 +624,7 @@ char* authentification(char* idClient)
 						strcat(msg,idClient);
 						strcat(msg,"-SYS-200-");
 						strcat(msg,pseudo);
-						msg = envoie(msg); // retourne msg = "erreurPseudo" ou "succes"
+						//msg = envoie(msg); // retourne msg = "erreurPseudo" ou "succes"
 					}
 					break;
 				case 1:
@@ -693,7 +650,7 @@ char* authentification(char* idClient)
 						strcat(msg,idClient);
 						strcat(msg,"-SYS-201-");
 						strcat(msg,pseudo);
-						msg = envoie(msg); // retourne msg = "erreurPseudo" ou "succes"
+						//msg = envoie(msg); // retourne msg = "erreurPseudo" ou "succes"
 					}
 					break;
 
@@ -701,7 +658,7 @@ char* authentification(char* idClient)
 					//compte invité
 					strcat(msg,idClient);
 					strcat(msg,"-SYS-202");
-					pseudo = envoie(msg); //retourne guest#### ex: guest2546
+					//pseudo = envoie(msg); //retourne guest#### ex: guest2546
 					break;
 				default:
 					break;
@@ -731,7 +688,7 @@ char* attenteJoueur(char * idClient){
 
 	printf("Le message est : %s\n", message);
 
-	message = envoie(message);
+	//message = envoie(message);
 
 	return message;
 
@@ -763,7 +720,7 @@ char* rejoindreSession(char * idClient){
 	printf("Le message est : %s\n", message);
 
 	//Retour de la forme 0-idClient0-1-idClient1.....
-	message = envoie(message);
+	//message = envoie(message);
 
 	return message;
 }
@@ -790,7 +747,7 @@ char* rejoindrePartie(char * idClient, int partie){
 
 	printf("Le message est : %s\n", message);
 
-	message = envoie(message);
+	//message = envoie(message);
 	return "yaya";
 }
 
@@ -814,7 +771,7 @@ char* regarderSession(char * idClient){
 	printf("Le message est : %s\n", message);
 
 	//Retour de la forme 0-idClienta0/idClientb0-1-idClienta1/idClientb1.....
-	message = envoie(message);
+	//message = envoie(message);
 
 	return message;
 }
@@ -841,7 +798,7 @@ char* regarderPartie(char * idClient, int partie){
 
 	printf("Le message est : %s\n", message);
 
-	message = envoie(message);
+	//message = envoie(message);
 
 }
 
@@ -1001,66 +958,50 @@ char* optionGame(char * idClient)
 
 char* triageArrivee(char* msgRecu)
 {
-	char* idClient = strtok(msgRecu,"-");
-	char* type = strtok(NULL,"-");
+	char* type = strtok(msgRecu,"-");
 	char* code = strtok(NULL,"-");
 	char* msgRetour = malloc(sizeof(char));
 
 	//Connexion ou déconnexion
-	if(!strcmp(idClient,"0") || !strcmp(code,"1"))
+	if(!strcmp(type,"SYS"))
 	{
-		//Si on demande à se connecter
-		if(!strcmp(code,"0"))
-		{
-			//récupérer son IdClient et lui envoyé
-			char* tmp = malloc(sizeof(char));
-			if(0) strcat(tmp,"erreurMsg");
-			else strcat(tmp,"123456");
-			return tmp;
-		}
-		//Sinon c'est qu'on veut se déconnecter
-		else
-		{
-			printf("On quitte le serveur et on signale que notre idClient est libre\n");
-			return NULL;
+		int intCode = atoi(code);
+		char* pseudo = strtok(NULL,"-");
+		switch (intCode) {
+			case 0:
+				printf("On quitte le serveur et on signale que notre idClient est libre\n");
+				printf("retour: DECO \n");
+				break;
+			case 20:
+				//Verif si l'authentification est possible (useless ?)
+				printf("Test authentification possible\n\n");
+				strcat(msgRetour,"authenOui");
+				break;
+			case 200:
+				//Si le pseudo existe dans la BD
+				if(1) strcat(msgRetour,"succes");
+				//Sinon
+				else strcat(msgRetour,"erreurPseudo");
+				break;
+			case 201:
+				//Si le pseudo n'est pas dans la BD
+				if(1) strcat(msgRetour,"succes");
+				//Sinon
+				else strcat(msgRetour,"erreurPseudo");
+				break;
+			case 202:
+				//Retourne un pseudo généré aléatoirement
+				strcat(msgRetour,"guest");
+				strcat(msgRetour,"####");
+				break;
+			default:
+				printf("DEBUG Message inconnue (mauvais format)\n");
+				break;
 		}
 	}
-	else
-	{
-		if(!strcmp(type,"SYS"))
-		{
-			int intCode = atoi(code);
-			char* pseudo = strtok(NULL,"-");
-			switch (intCode) {
-				case 20:
-					//Verif si l'authentification est possible (useless ?)
-					printf("Test authentification possible\n\n");
-					strcat(msgRetour,"authenOui");
-					break;
-				case 200:
-					//Si le pseudo existe dans la BD
-					if(1) strcat(msgRetour,"succes");
-					//Sinon
-					else strcat(msgRetour,"erreurPseudo");
-					break;
-				case 201:
-					//Si le pseudo n'est pas dans la BD
-					if(1) strcat(msgRetour,"succes");
-					//Sinon
-					else strcat(msgRetour,"erreurPseudo");
-					break;
-				case 202:
-					//Retourne un pseudo généré aléatoirement
-					strcat(msgRetour,"guest");
-					strcat(msgRetour,"####");
-					break;
-				default:
-					break;
-			}
-		}
-		return msgRetour;
-	}
+	return msgRetour;
 }
+
 //Ajout d'une chaine de caractère à la fin du fichier.
 void ajoutCompte(FILE* fichier,char* chaine)
 {
@@ -1126,7 +1067,6 @@ int utiliserCompte(char* compte,int mode)
 		//Si le nom de compte n'a pas été trouvé
 		if(test)
 		{
-			printf("DEBUG %s\n",compte);
 			ajoutCompte(fichier,compte);
 			free(fichier);
 			return 1;
@@ -1312,5 +1252,36 @@ int indexCreerPartie(Partie* ListePartie)
 		return i;
 	}
 	return -1;
+}
+
+char * envoie(int idClient, char * message)
+{
+    char* message_retour = malloc(20*sizeof(char));
+
+    //Envoi message vers le serveur
+    if( send(idClient , message , strlen(message) , 0) < 0)
+    {
+        fprintf(stderr,"Echec envoi\n");
+        close(idClient);
+        return "msgError";
+    }
+
+    //Reception message du serveur
+    if( recv(idClient , message_retour , MAX_BUFFER , 0) < 0)
+    {
+        fprintf(stderr,"Echec reception\n");
+        return "msgError";
+    }	
+	return  message_retour;
+}
+char* genGuest(int* numGuest)
+{
+	*numGuest += 1;
+	char* name  = malloc(20*sizeof(char));
+	char tmp[20]= "";
+	strcpy(name,"Guest#");
+	sprintf(tmp, "%d",*numGuest);
+	strcat(name,tmp);
+	return name;
 }
 //==============================================================================

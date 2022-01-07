@@ -7,7 +7,6 @@ Client
 #include <arpa/inet.h>
 #include <unistd.h>
 #include "fonctions.h"
-#define MAX_BUFFER 2000
 
 int main(int argc , char *argv[])
 {
@@ -38,7 +37,9 @@ int main(int argc , char *argv[])
 	}
 
 	fprintf(stdout,"Connecté\n");
-
+	//authentification
+	//optionJeu
+	//jeu
 	//Boucle sans fin de communication vers le serveur
 	while(1)
 	{
@@ -47,21 +48,7 @@ int main(int argc , char *argv[])
 		fprintf(stdout,"Saisir message : ");
 		fscanf(stdin,"%s" , message);
 
-		//Envoi message vers le serveur
-		if( send(sock , message , strlen(message) , 0) < 0)
-		{
-			fprintf(stderr,"Echec envoi\n");
-			close(sock);
-			return 1;
-		}
-		fprintf(stderr,"Message envoyé:%s\t",message);
-
-		//Reception message du serveur
-		if( recv(sock , server_reply , MAX_BUFFER , 0) < 0)
-		{
-			fprintf(stderr,"Echec reception\n");
-			return 1;
-		}
+		strcpy(server_reply,envoie(sock,message));
 
 		fprintf(stdout,"Réponse du serveur: %s\n",server_reply);
 	}

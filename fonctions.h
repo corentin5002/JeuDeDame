@@ -6,6 +6,10 @@
 #include <time.h>
 #include <dirent.h>
 #include <string.h>
+#include<sys/socket.h>
+#include<arpa/inet.h>
+#include<unistd.h>
+#include<pthread.h>
 //=============================================================================
 #define J1 1
 #define J2 2
@@ -13,6 +17,8 @@
 #define TRUE  1
 #define FALSE 0
 #define MAX_PARTIE 10
+#define MAX_BUFFER 2000
+
 //==============================================================================
 //structure d'une case du Damier------------------------------------------------
 struct Case
@@ -40,6 +46,7 @@ struct Args
 {
 	int idClient;
 	Partie* Lpartie;
+	int* numGuest;
 };
 //FONCTIONS=====================================================================
 
@@ -119,4 +126,7 @@ char * transformCoupleToChar(Case * Damier,int Couple[2]);
 
 Partie* genListePartie();
 int indexCreerPartie(Partie* ListePartie);
+char * envoie(int idClient, char * message);
+char* genGuest(int* numGuest);
+
 #endif
