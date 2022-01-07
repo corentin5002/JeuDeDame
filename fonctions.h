@@ -6,9 +6,9 @@
 #include <time.h>
 #include <dirent.h>
 #include <string.h>
-#include <sys/socket.h>
-#include <arpa/inet.h>
-#include <unistd.h>
+#include<sys/socket.h>
+#include<arpa/inet.h>
+#include<unistd.h>
 #include<pthread.h>
 //=============================================================================
 #define J1 1
@@ -16,31 +16,43 @@
 #define CASE 0
 #define TRUE  1
 #define FALSE 0
+#define MAX_PARTIE 10
 #define MAX_BUFFER 2000
+
 //==============================================================================
 //structure d'une case du Damier------------------------------------------------
-typedef struct Case Case;
 struct Case
 {
 	int dame  ; //Si la case contient un pion = FALSE sinon = TRUE
 	int equipe; //Si la case contient un pion du J1, du J2 ou une case vide (1,2,0)
 	int etat  ; //Marqueur pour les différentes fonctions.
 };
+typedef struct Case Case;
 
 //Structure d'une partie côté serveur
-typedef struct Partie Partie;
 struct Partie
 {
 	Case * Damier; //Damier de la partie
+	int tour;	//indique qui doit joueur
 	int num; //identifiant de la partie
-	int j1 ; //contient l'idClient du joueur 1
-	int j2 ; //idem 				  joueur 2
+	int j1; //contient l'idClient du joueur 1
+	int j2; //idem 				  joueur 2
+};
+typedef struct Partie Partie;
+//Structure d'entree des arguments dans le thread_create
+
+typedef struct Args Args;
+struct Args
+{
+	int idClient;
+	Partie* Lpartie;
+	int* numGuest;
 };
 //FONCTIONS=====================================================================
 
 //outils
 //Créer le damier
-Case * genJeu			(int tailleDamier);
+Case * genJeu			();
 //Set une case du damier
 void setCase			(Case* Damier,int coord,Case cNvl);
 //Gère le mouvement d'un pion (soit vers l'avant sur case vide, soit mange un pion)
@@ -84,11 +96,23 @@ char* triageArrivee		(char* msgRecu);
 char* optionGame		(int idClient);
 
 //Gestion des fonctions SYS
+<<<<<<< HEAD
 char* authentification	(int idClient);
 char* attenteJoueur 	(int idClient);
 char* jeuPartie			(int idClient, int equipe);
 char* rejoindre			(int idClient);
 char* regarder			(int idClient);
+=======
+char* connexion			();
+char* deconnexion		(char* idClient);
+char* authentification	(char* idClient);
+char* attenteJoueur 	(char* idClient);
+char* jeuPartie			(char* idClient, int equipe);
+char* rejoindreSession	(char* idClient);
+char* rejoindrePartie	(char* idPartie, int partie);
+char* regarderSession	(char* idClient);
+char* regarderPartie	(char* idPartie,int partie);
+>>>>>>> debutReseau
 
 //Manipulation du fichier "compte"
 //Ajout d'une chaine de caractère à la fin du fichier.
@@ -107,4 +131,10 @@ int * transformCharToCouple(char * ChaineChar);
 Case * transformCharToDamier(char * ChaineChar);
 char * transformDamierToChar(Case * Damier);
 char * transformCoupleToChar(Case * Damier,int Couple[2]);
+
+Partie* genListePartie();
+int indexCreerPartie(Partie* ListePartie);
+char * envoie(int idClient, char * message);
+char* genGuest(int* numGuest);
+
 #endif

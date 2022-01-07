@@ -12,6 +12,7 @@
 #include<unistd.h>
 #include<pthread.h>
 
+#include "fonctions.h"
 #define MAX_BUFFER 2000
 #define TAILLE_FILE 3
 //#define DEBUG 1
@@ -21,6 +22,7 @@ void *traitement_connection(void *);
 
 int main(int argc , char *argv[])
 {
+
 	int socket_desc , client_sock , c , *new_sock;
 	struct sockaddr_in server , client;
 
@@ -73,9 +75,16 @@ int main(int argc , char *argv[])
 		//#endif
 		pthread_t sniffer_thread;
 		new_sock = malloc(1);
-		*new_sock = client_sock;
 
-		if( pthread_create( &sniffer_thread , NULL ,  traitement_connection , (void*) new_sock) < 0)
+		Args* argsThread = malloc(sizeof(struct Args));
+		Partie* ListePartie = genListePartie();
+		int * tmp = malloc(sizeof(int));
+		*tmp = 0;
+		argsThread->Lpartie = ListePartie;
+		argsThread->idClient= client_sock;
+		argsThread->numGuest= tmp;
+
+		if( pthread_create( &sniffer_thread , NULL ,  traitement_connection , (void*)argsThread) < 0)
 		{
 			fprintf(stderr,"\nImpossible de créer un thread");
 			return 1;
@@ -98,9 +107,13 @@ int main(int argc , char *argv[])
 /*
  * Fonction qui traite les receptions/transmissions pour chaque client
  * */
-void *traitement_connection(void *socket_desc)
+void *traitement_connection(void *argsThread)
 {
-	int sock = *(int*)socket_desc;
+	Args* nv = argsThread;
+	int index = indexCreerPartie(nv->Lpartie);
+	Partie* Session = &nv->Lpartie[index];
+	int sock = nv->idClient;
+	char pseudo[20] = "";
 	int read_size;
 
 	#ifdef DEBUG
@@ -110,27 +123,83 @@ void *traitement_connection(void *socket_desc)
 	//Reception du message du client
 	while( 1 )
 	{
-		char client_message[MAX_BUFFER]="";
+		char msgRecu[MAX_BUFFER]="";
 
 		//Renvoi du même message
-		if ((read_size = recv(sock , client_message , MAX_BUFFER , 0)) > 0)
+		if ((read_size = recv(sock , msgRecu , MAX_BUFFER , 0)) > 0)
 		{
-			fprintf (stdout,"Client %d\t - Message:%s\n",sock,client_message);
-			write(sock , client_message , strlen(client_message));
+			fprintf (stdout,"Client %d\t - Message:%s\n",sock,msgRecu);
 		}
 		else if (read_size == 0)
 		{
+			utiliserCompte(pseudo,2);
 			fprintf(stdout,"Déconnection client %d\n",sock);
-			free(socket_desc);
+			free(argsThread);
 			break;
 		}
 		else if(read_size == -1)
 		{
 			fprintf(stderr,"Erreur reception\n");
-			free(socket_desc);
+			free(argsThread);
 			break;
 		}
-	}
+		//Aiguillage des messages clients
+		char* type = strtok(msgRecu,"-");
+		char* code = strtok(NULL,"-");
 
+		char  msgRetour[MAX_BUFFER] ="";
+
+		//Connexion ou déconnexion
+		if(!strcmp(type,"SYS"))
+		{
+			int intCode = atoi(code);
+			char* info = strtok(NULL,"-");
+			int test;
+			switch (intCode) {
+				case 0:
+					printf("On quitte le serveur et on signale que notre idClient est libre\n");
+					printf("retour: DECO \n");
+					break;
+				case 20:
+					//Verif si l'authentification est possible (useless ?)
+					printf("Test authentification possible\n\n");
+					strcpy(msgRetour,"authenOui");
+					break;
+				case 200:
+					//Si le pseudo existe dans la BD
+					test = utiliserCompte(info,0);
+					if(test)
+					{
+						strcpy(pseudo,info);
+						strcpy(msgRetour,"succes");
+					}
+					//Sinon
+					else strcpy(msgRetour,"erreurPseudo");
+					break;
+				case 201:
+					//Si le pseudo n'est pas dans la BD
+					test = utiliserCompte(info,1);
+					if(test)
+					{
+						strcpy(pseudo,info);
+						strcpy(msgRetour,"succes");
+					}
+					//Sinon
+					else strcpy(msgRetour,"erreurPseudo");
+					break;
+				case 202:
+					//Retourne un pseudo généré aléatoirement
+					strcpy(pseudo,genGuest(nv->numGuest));
+					strcpy(msgRetour,pseudo);
+					printf("%s\n",msgRetour);
+
+					break;
+				default:
+					printf("DEBUG Message inconnue (mauvais format)\n");
+					break;
+			}
+		}
+		write(sock , msgRetour , strlen(msgRetour));
+	}
 	return 0;
 }

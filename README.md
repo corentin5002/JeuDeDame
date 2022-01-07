@@ -46,18 +46,6 @@ envoi()-> reception() -> gareTriageServ -> envoi()
 client(idClient)-SYS
 
 
-12080-SYS-22
-```c
-while(c != '\0')
-{
-	i++;
-	c = str[i];
-	if (strcmp('c',c) == 0)
-	{
-
-	}
-}
-```
 
 
 

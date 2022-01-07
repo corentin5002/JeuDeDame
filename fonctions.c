@@ -3,12 +3,12 @@
 //------------------------------------------------------------------------------
 //Fonction de génération d'un damier de taille 10x10
 //Retourne un pointeur sur un tableau une dimension de 50 Case.
-Case * genJeu(int tailleDamier)
+Case * genJeu()
 {
-	Case * Damier = malloc(tailleDamier*sizeof(Case));
+	Case * Damier = malloc(50*sizeof(Case));
 	int i;
 	//initialisation du Damier
-	for(i=0;i<tailleDamier;i++){
+	for(i=0;i<50;i++){
 		if (i < 20)
 		{
 			Damier[i].equipe= J2;
@@ -645,13 +645,13 @@ char* authentification(int idClient)
 							retour = TRUE;
 							break;
 						}
-						
+
 						char message_compte [MAX_BUFFER] = "";
 						char message_retour [MAX_BUFFER] = "";
 						strcat(message_compte,"SYS-200-");
 						strcat(message_compte,pseudo);
 						strcpy(message_retour,envoie(idClient,message_compte)); // retourne msg = "erreurPseudo" ou "succes"
-					
+
 						if(strcmp(message_retour,"succes") == 0) break;
 						if(strcmp("erreurPseudo",message_retour) == 0)
 						{
@@ -672,13 +672,13 @@ char* authentification(int idClient)
 							retour = TRUE;
 							break;
 						}
-						
+
 						char message_compte [MAX_BUFFER] = "";
 						char message_retour [MAX_BUFFER] = "";
 						strcat(message_compte,"-SYS-201-");
 						strcat(message_compte,pseudo);
 						strcpy(message_retour,envoie(idClient,message_compte)); // retourne msg = "erreurPseudo" ou "succes"
-					
+
 						if(strcmp(message_retour,"succes") == 0) break;
 						if(strcmp("erreurPseudo",message_retour) == 0)
 						{
@@ -713,7 +713,7 @@ char* rejoindre(int idClient){
 	//Envoie du message pour obtenir liste des parties à rejoindre;
 
 	//Message interpreté côté serveur;
-	char messServeur[] 				 = "SYS-2210"; 
+	char messServeur[] 				 = "SYS-2210";
 	//Message stockant le retour serveur;
 	char message_reponse[MAX_BUFFER] = "";
 
@@ -723,7 +723,7 @@ char* rejoindre(int idClient){
 	//Permettra d'obtenir l'identifiant du joueur 1 :)
 	char message_sauv[MAX_BUFFER] = "";
 	strcpy(message_sauv, message_reponse);
-	
+
 	//On continue la fonction s'il n'y a pas de message d'erreur.
 	//Sinon on le retourne :)
 	if(strcmp(message_reponse,"msgError") != 0)
@@ -746,7 +746,7 @@ char* rejoindre(int idClient){
 		scanf("%s", &partie);
 		while((partie < 0 || partie > nbPartie) && (cmpRep >= 0))
 		{
-			printf("Veuillez mettre une instruction valide," 
+			printf("Veuillez mettre une instruction valide,"
 			"il vous reste %d essaie(s) avant d'être éjecté du jeu.\n", cmpRep);
 			scanf("%d", &partie);
 			cmpRep --;
@@ -763,9 +763,9 @@ char* rejoindre(int idClient){
 			{
 				chercheJoueur = strtok(NULL, "-");
 			}
-			
+
 			chercheJoueur = strtok(NULL, "-");
-			
+
 			//Forme du message à envoyer : SYS-2211-joueur1
 			char * message = malloc(MAX_BUFFER * sizeof(char));
 
@@ -799,7 +799,7 @@ char* regarder(int idClient){
 	char message_sauv      [MAX_BUFFER] = "";
 	strcpy(message_reception,envoie(idClient,messServeur));
 	strcpy(message_sauv,message_reception);
-		
+
 	if(strcmp(message_reception,"msgError") != 0)
 	{
 		int nbPartie = 0;
@@ -820,7 +820,7 @@ char* regarder(int idClient){
 		scanf("%d", &partie);
 		while((partie < 0 || partie > nbPartie) && (cmpRep >= 0))
 		{
-			printf("Veuillez mettre une instruction valide," 
+			printf("Veuillez mettre une instruction valide,"
 			"il vous reste %d essaie(s) avant d'être éjecté du jeu.\n", cmpRep);
 			scanf("%d", &partie);
 			cmpRep --;
@@ -836,9 +836,9 @@ char* regarder(int idClient){
 			{
 				chercheJoueur = strtok(NULL, "-");
 			}
-			
+
 			chercheJoueur = strtok(NULL, "-");
-			
+
 			//Forme du message à envoyer : SYS-2221-joueur1
 			char * message = malloc(MAX_BUFFER * sizeof(char));
 
@@ -876,7 +876,7 @@ void optionGame(int idClient)
 
 	//Definition d'une chaine permettant de récuperer le retour des foctions intermédiares.
 	char msg[MAX_BUFFER] = "";
-	
+
 	switch (reponse)
 	{
 		//Créer une nouvelle partie
@@ -887,7 +887,7 @@ void optionGame(int idClient)
 		case 1:
 			rejoindre(idClient);
 			break;
-		//Regarder une partie  
+		//Regarder une partie
 		case 2:
 			regarder(idClient);
 			break;
@@ -911,66 +911,50 @@ void optionGame(int idClient)
 
 char* triageArrivee(char* msgRecu)
 {
-	char* idClient = strtok(msgRecu,"-");
-	char* type = strtok(NULL,"-");
+	char* type = strtok(msgRecu,"-");
 	char* code = strtok(NULL,"-");
 	char* msgRetour = malloc(sizeof(char));
 
 	//Connexion ou déconnexion
-	if(!strcmp(idClient,"0") || !strcmp(code,"1"))
+	if(!strcmp(type,"SYS"))
 	{
-		//Si on demande à se connecter
-		if(!strcmp(code,"0"))
-		{
-			//récupérer son IdClient et lui envoyé
-			char* tmp = malloc(sizeof(char));
-			if(0) strcat(tmp,"erreurMsg");
-			else strcat(tmp,"123456");
-			return tmp;
-		}
-		//Sinon c'est qu'on veut se déconnecter
-		else
-		{
-			printf("On quitte le serveur et on signale que notre idClient est libre\n");
-			return NULL;
+		int intCode = atoi(code);
+		char* pseudo = strtok(NULL,"-");
+		switch (intCode) {
+			case 0:
+				printf("On quitte le serveur et on signale que notre idClient est libre\n");
+				printf("retour: DECO \n");
+				break;
+			case 20:
+				//Verif si l'authentification est possible (useless ?)
+				printf("Test authentification possible\n\n");
+				strcat(msgRetour,"authenOui");
+				break;
+			case 200:
+				//Si le pseudo existe dans la BD
+				if(1) strcat(msgRetour,"succes");
+				//Sinon
+				else strcat(msgRetour,"erreurPseudo");
+				break;
+			case 201:
+				//Si le pseudo n'est pas dans la BD
+				if(1) strcat(msgRetour,"succes");
+				//Sinon
+				else strcat(msgRetour,"erreurPseudo");
+				break;
+			case 202:
+				//Retourne un pseudo généré aléatoirement
+				strcat(msgRetour,"guest");
+				strcat(msgRetour,"####");
+				break;
+			default:
+				printf("DEBUG Message inconnue (mauvais format)\n");
+				break;
 		}
 	}
-	else
-	{
-		if(!strcmp(type,"SYS"))
-		{
-			int intCode = atoi(code);
-			char* pseudo = strtok(NULL,"-");
-			switch (intCode) {
-				case 20:
-					//Verif si l'authentification est possible (useless ?)
-					printf("Test authentification possible\n\n");
-					strcat(msgRetour,"authenOui");
-					break;
-				case 200:
-					//Si le pseudo existe dans la BD
-					if(1) strcat(msgRetour,"succes");
-					//Sinon
-					else strcat(msgRetour,"erreurPseudo");
-					break;
-				case 201:
-					//Si le pseudo n'est pas dans la BD
-					if(1) strcat(msgRetour,"succes");
-					//Sinon
-					else strcat(msgRetour,"erreurPseudo");
-					break;
-				case 202:
-					//Retourne un pseudo généré aléatoirement
-					strcat(msgRetour,"guest");
-					strcat(msgRetour,"####");
-					break;
-				default:
-					break;
-			}
-		}
-		return msgRetour;
-	}
+	return msgRetour;
 }
+
 //Ajout d'une chaine de caractère à la fin du fichier.
 void ajoutCompte(FILE* fichier,char* chaine)
 {
@@ -990,14 +974,15 @@ void decoReco(FILE* fichier,long curseur,char nvChar)
 
 int utiliserCompte(char* compte,int mode)
 {
+
 	FILE* fichier = fopen("comptes","r+");
 	char* buff = malloc(22*sizeof(char));
 	char* modifCompte=malloc(22*sizeof(char));
-	strcat(modifCompte,"-");
-	strcat(modifCompte,compte);
 	//Trouver un pseudo existant dans le fichier
 	if(mode == 0)
 	{
+		strcat(modifCompte,"-");
+		strcat(modifCompte,compte);
 		while(fscanf(fichier,"%s\n",buff) != -1)
 		{
 			//Si on détecte le nom dans la base de donnée
@@ -1036,10 +1021,26 @@ int utiliserCompte(char* compte,int mode)
 		//Si le nom de compte n'a pas été trouvé
 		if(test)
 		{
-			printf("DEBUG %s\n",compte);
 			ajoutCompte(fichier,compte);
 			free(fichier);
 			return 1;
+		}
+	}
+	else if(mode == 2)
+	{
+		strcat(modifCompte,"+");
+		strcat(modifCompte,compte);
+		//Deconnexion
+		while(fscanf(fichier,"%s\n",buff) != -1)
+		{
+			//Si on détecte le nom dans la base de donnée
+			if(buff[0]=='+' && !strcmp(modifCompte,buff))
+			{
+				fseek(fichier,-strlen(compte)-2,SEEK_CUR);
+				decoReco(fichier,ftell(fichier),'-');
+				free(fichier);
+				return 1;
+			}
 		}
 	}
 	else
@@ -1165,7 +1166,7 @@ char * transformDamierToChar(Case * Damier)
 
 Case * transformCharToDamier(char * ChaineChar)
 {
-    Case * Damier = genJeu(50);
+    Case * Damier = genJeu();
     int i = 0;
     char separateur[] = "-";
     char * ChaineProvisoire = strtok(ChaineChar, separateur);
@@ -1199,15 +1200,39 @@ int * transformCharToCouple(char * ChaineChar)
 
     return Couple;
 }
-
 //==============================================================================
-
-int main()
+//Gestion partie
+Partie* genListePartie()
 {
-	//Case test = {FALSE,J1};
-	Case* Damier = genJeu(50);
-	int* chemin;
-	//bougerPiece(Damier,17,22);
-	damierType3(Damier,50);
-	return 0;
-}}
+	Partie* ListePartie = malloc(MAX_PARTIE*sizeof(struct Partie));
+	for(int i=0;i<MAX_PARTIE;i++)
+	{
+	    ListePartie[i].Damier = genJeu();
+		ListePartie[i].tour = J1;
+		ListePartie[i].j1	= 0;
+		ListePartie[i].j2	= 0;
+	}
+	return ListePartie;
+}
+//
+int indexCreerPartie(Partie* ListePartie)
+{
+	for(int i=0;i<MAX_PARTIE;i++)
+	{
+		if(ListePartie[i].j1 == 0)
+		return i;
+	}
+	return -1;
+}
+
+char* genGuest(int* numGuest)
+{
+	*numGuest += 1;
+	char* name  = malloc(20*sizeof(char));
+	char tmp[20]= "";
+	strcpy(name,"Guest#");
+	sprintf(tmp, "%d",*numGuest);
+	strcat(name,tmp);
+	return name;
+}
+//==============================================================================
