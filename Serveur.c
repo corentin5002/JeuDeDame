@@ -128,6 +128,7 @@ void *traitement_connection(void *argsThread)
 		//Renvoi du même message
 		if ((read_size = recv(sock , msgRecu , MAX_BUFFER , 0)) > 0)
 		{
+			//
 			fprintf (stdout,"Client %d\t - Message:%s\n",sock,msgRecu);
 		}
 		else if (read_size == 0)

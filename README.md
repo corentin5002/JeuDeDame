@@ -48,8 +48,27 @@ client(idClient)-SYS
 
 
 
+Crea :
 
+send 220 -> succees
 
+thread :
+Partie
+	.Damier;
+	.tour = 0;
+	.J1	  = **idClient1**;
+	.j2   = 0;
+
+rejoindre:
+
+send 221 ->
+
+thread:
+Partie
+	.Damier;
+	.tour = J1;
+	.J1	  = **idClient1**;
+	.j2   = **idClient2**;
 
 
 

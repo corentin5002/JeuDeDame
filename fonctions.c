@@ -1208,7 +1208,7 @@ Partie* genListePartie()
 	for(int i=0;i<MAX_PARTIE;i++)
 	{
 	    ListePartie[i].Damier = genJeu();
-		ListePartie[i].tour = J1;
+		ListePartie[i].tour = 0;
 		ListePartie[i].j1	= 0;
 		ListePartie[i].j2	= 0;
 	}

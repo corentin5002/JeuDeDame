@@ -33,10 +33,12 @@ typedef struct Case Case;
 struct Partie
 {
 	Case * Damier; //Damier de la partie
-	int tour;	//indique qui doit joueur
+	int tour;	//indique qui doit jouer
 	int num; //identifiant de la partie
-	int j1; //contient l'idClient du joueur 1
-	int j2; //idem 				  joueur 2
+	int idJ1; //contient l'idClient du joueur 1
+	char* userJ1;//""		le pseudo du joueur1
+	int idJ2; //idem 				  joueur 2
+	char* userJ12;
 };
 typedef struct Partie Partie;
 //Structure d'entree des arguments dans le thread_create
