@@ -106,9 +106,10 @@ int main(int argc , char *argv[])
  * */
 void *traitement_connection(void *argsThread)
 {
-
-	int sock = 0;
-	printf("%d\n",argsThread->idClient);
+	Args* nv = argsThread;
+	int index = indexCreerPartie(nv->Lpartie);
+	Partie* Session = &nv->Lpartie[index];
+	int sock = nv->idClient;
 
 	int read_size;
 

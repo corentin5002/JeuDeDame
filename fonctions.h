@@ -118,4 +118,5 @@ char * transformDamierToChar(Case * Damier);
 char * transformCoupleToChar(Case * Damier,int Couple[2]);
 
 Partie* genListePartie();
+int indexCreerPartie(Partie* ListePartie);
 #endif

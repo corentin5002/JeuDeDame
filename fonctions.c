@@ -1303,5 +1303,14 @@ Partie* genListePartie()
 	}
 	return ListePartie;
 }
-
+//
+int indexCreerPartie(Partie* ListePartie)
+{
+	for(int i=0;i<MAX_PARTIE;i++)
+	{
+		if(ListePartie[i].j1 == 0)
+		return i;
+	}
+	return -1;
+}
 //==============================================================================
