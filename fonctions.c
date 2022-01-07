@@ -602,7 +602,7 @@ char* authentification(int idClient)
 				if(choix != 1000 && test)
 				{
 					system("clear");
-					printf("L'option n° %d n'est pas disponible\n",choix);
+					printf("L'option n° %d n'est pas disponible\n\n",choix);
 					printf(	"Vous voulez :\n"
 							""
 							"0- utiliser un compte déjà existant.\n"
@@ -688,7 +688,7 @@ char* authentification(int idClient)
 
 char* rejoindre(int idClient){
 	//Envoie du message pour obtenir liste des parties à rejoindre;
-
+	system("clear");
 	//Message interpreté côté serveur;
 	char messServeur[] 				 = "SYS-2210";
 	//Message stockant le retour serveur;
@@ -699,11 +699,11 @@ char* rejoindre(int idClient){
 	strcpy(msgRecu,envoie(idClient, messServeur));
 	if(!strcmp(msgRecu,"msgError"))
 		return msgRecu;
-	printf("liste partie dispo%s\n",msgRecu);
+
 	//Permet d'avoir une copie du message retour;
-	//Permettra d'obtenir l'identifiant du joueur 1 :)
+	//Permettra d'obtenir l'identifiant du joueur 1
 	char message_sauv[MAX_BUFFER] = "";
-	char* pseudoJ1 = malloc(sizeof(char));
+	char* pseudoJ1 = malloc(MAX_BUFFER*sizeof(char));
 	strcpy(message_sauv, msgRecu);
 
 	//On continue la fonction s'il n'y a pas de message d'erreur.
@@ -711,7 +711,7 @@ char* rejoindre(int idClient){
 	if(strcmp(msgRecu,"msgError") != 0)
 	{
 		int nbPartie = 0;
-		printf("Veuillez choisir quelle partie vous voulez rejoindre :\n");
+		printf("\nVeuillez choisir quelle partie vous voulez rejoindre :\n\n");
 		char * joliePrint = strtok(msgRecu, "-");
 		while(joliePrint != NULL)
 		{
@@ -720,40 +720,39 @@ char* rejoindre(int idClient){
 			joliePrint = strtok(NULL, "-");
 			nbPartie ++;
 		}
-		//On compte une fois de trop, donc on décrémente;
 		nbPartie --;
-		//Attente de la réponse,
-		char partie;
-		int cmpRep  = 5;
-		scanf("%s", &partie);
-		while((partie < 0 || partie > nbPartie) && (cmpRep >= 0))
+		printf("\nSélectionnez un adversaire (son numéro): \n");
+		int test = FALSE;
+		int choix = 1000;
+		while(1)
 		{
-			printf("Veuillez mettre une instruction valide,"
-			"il vous reste %d essaie(s) avant d'être éjecté du jeu.\n", cmpRep);
-			cmpRep --;
+			if(choix>=0 && choix<=nbPartie) break;
+			if(choix != 1000 && test)
+			{
+				printf("Le nombre saisie n'est pas valide \n");
+				printf("Sélectionnez un adversaire (son numéro): \n");
+			}
+			test = TRUE;
+			printf("\nOption : ");
+			scanf("%d",&choix);
 		}
-		if(cmpRep >= 0)
+		nbPartie = 0;
+		char * chercheJoueur = strtok(message_sauv, "-");
+		while(nbPartie !=choix && chercheJoueur != NULL)
 		{
-			//Message interpreté côté serveur;
-			char * messServeur = "SYS-2211-";
-
-			//Récupération du joueur1 de la partie choisie;
-			char * chercheJoueur = strtok(message_sauv, "-");
-
-
 			chercheJoueur = strtok(NULL, "-");
-
-			//Forme du message à envoyer : SYS-2211-joueur1
-			char message[MAX_BUFFER] = "";
-
-			strcat(message, messServeur);
-			strcat(message, chercheJoueur);
-
-			printf("Le message est : %s\n", message);
-
-
-			strcpy(pseudoJ1,envoie(idClient, message));
+			nbPartie ++;
 		}
+
+		//Message interpreté côté serveur;
+		//Forme du message à envoyer : SYS-2211-joueur1
+		char message[MAX_BUFFER];
+		strcpy(message,"SYS-2211-");
+		strcat(message, chercheJoueur);
+
+		printf("\nLe message est : %s\n", message);
+
+		strcpy(pseudoJ1,envoie(idClient, message));
 	}
 	else
 	{
@@ -763,7 +762,7 @@ char* rejoindre(int idClient){
 	if(test) return pseudoJ1;
 	else
 	{
-		free(pseudoJ1);
+		strcpy(pseudoJ1,"");
 		return "";
 	}
 }
@@ -836,7 +835,7 @@ char* regarder(int idClient){
 char* optionGame(int idClient)
 {
 	printf("Vous voulez jouer, très bien :\n");
-	printf("Que voulez vous faire ?\n");
+	printf("Que voulez vous faire ?\n\n");
 	printf("0.Créer une nouvelle partie,\n");
 	printf("1.Rejoindre une partie,\n");
 	printf("2.Regarder une partie en cours,\n");
@@ -939,7 +938,7 @@ int utiliserCompte(char* compte,int mode)
 				printf("buffmode0 %s\n",buff);
 				fseek(fichier,-strlen(compte)-2,SEEK_CUR);
 				decoReco(fichier,ftell(fichier),'+');
-				free(fichier);
+				fclose(fichier);
 				return 1;
 			}
 		}
@@ -971,7 +970,7 @@ int utiliserCompte(char* compte,int mode)
 		if(test)
 		{
 			ajoutCompte(fichier,compte);
-			free(fichier);
+			fclose(fichier);
 			return 1;
 		}
 	}
@@ -989,7 +988,7 @@ int utiliserCompte(char* compte,int mode)
 
 				fseek(fichier,-strlen(compte)-2,SEEK_CUR);
 				decoReco(fichier,ftell(fichier),'-');
-				free(fichier);
+				fclose(fichier);
 				return 1;
 			}
 		}
@@ -998,7 +997,7 @@ int utiliserCompte(char* compte,int mode)
 	{
 		fprintf(stderr,"Erreur: mode invalide pour fonction utiliserCompte\n");
 	}
-	free(fichier);
+	fclose(fichier);
 	return 0;
 }
 //Avoir indice coordP d'une case dans Damier à partir de ses coordonnées [x,y]
@@ -1050,71 +1049,51 @@ int* entreeJoueur(Case* Damier,int** MouvLegaux)
 
 	return MouvLegaux[choix+1];
 }
-char * transformCoupleToChar(Case * Damier,int Couple[2])
+char * transformCoupleToChar(int ** TabCouple)
 {
-    //Sert de chaine de charactère de retour
-    char * chaine_char = malloc(6*sizeof(char));
-    //Sert de chaine de charctère pour les nombres
-    char v1[3]="";
-    char v2[3]="";
+	//Sert de chaine de charactère de retour
+	char * chaine_char = malloc(MAX_BUFFER * sizeof(char));
+	//Sert de chaine de charctère pour les nombres
+	char v1[3]="";
+	char v2[3]="";
 
-    //Transforme un entier en charactère
-    sprintf(v1,"%d",Couple[0]);
-    sprintf(v2,"%d",Couple[1]);
+	sprintf(chaine_char, "%d", TabCouple[0][0]);
+	strcat(chaine_char,"-");
+	for(int i=1;i<TabCouple[0][0]+1;i++)
+	{
+		int coordDep = TabCouple[i][0];
+		int coordArr = TabCouple[i][1];
+		//Transforme un entier en charactère
+		sprintf(v1,"%d", coordDep);
+		sprintf(v2,"%d", coordArr);
 
-    strcpy(chaine_char,v1);
-    strcat(chaine_char,"-");
-    strcat(chaine_char,v2);
+		strcat(chaine_char,v1);
+		strcat(chaine_char,"-");
+		strcat(chaine_char,v2);
+		strcat(chaine_char,"-");
+	}
 
-    return chaine_char;
+	return chaine_char;
 }
-
-char * transformDamierToChar(Case * Damier)
+int ** transformCharToCouple(char * ChaineChar)
 {
-    char * strDamier   = malloc(101 * sizeof(char));
-    char * caseVide    = "0";
-    char * equipe1     = "1";
-    char * equipe2     = "2";
+    char * chaine_couple = strtok(ChaineChar,"-");
 
-    int i = 0;
-    if(Damier[i].equipe == 1)
-    {
-        strcpy(strDamier, equipe1);
-        strcat(strDamier, "-");
-    }
-    else if(Damier[i].equipe == 2)
-    {
-        strcpy(strDamier, equipe2);
-        strcat(strDamier, "-");
-    }
-    else
-    {
-        strcpy(strDamier, caseVide);
-        strcat(strDamier, "-");
-    }
+    int taille = atoi(chaine_couple);
+    int ** Couple = genTab2D();
 
-    for(i = 1; i<50; i++)
+    for(int i = 1; i < taille + 1; i ++)
     {
-        if(Damier[i].equipe == 1)
-        {
-            strcat(strDamier,equipe1);
-            strcat(strDamier, "-");
-        }
-        else if(Damier[i].equipe == 2)
-        {
-            strcat(strDamier,equipe2);
-            strcat(strDamier, "-");
-        }
-        else
-        {
-            strcat(strDamier,caseVide);
-            strcat(strDamier, "-");
-        }
-    }
+		int * v = malloc(sizeof(int) * 2);
+        chaine_couple = strtok(NULL,"-");
+		v[0] = atoi(chaine_couple);
+        chaine_couple = strtok(NULL,"-");
+        v[1] = atoi(chaine_couple);
 
-    return strDamier;
+        Couple = ajoutTab2D(Couple, v);
+    }
+    return Couple;
 }
-
 Case * transformCharToDamier(char * ChaineChar)
 {
     Case * Damier = genJeu();
@@ -1130,26 +1109,6 @@ Case * transformCharToDamier(char * ChaineChar)
     }
 
     return Damier;
-}
-
-int * transformCharToCouple(char * ChaineChar)
-{
-    int * Couple = malloc(2 * sizeof(int));
-    char * cpyChaine = malloc(6* sizeof(char));
-    strcpy(cpyChaine, ChaineChar);
-    char * v1;
-    char * v2;
-
-    //Le séparateur '-'
-    v1 = strtok(cpyChaine,"-");
-    v2 = strtok(NULL,"");
-
-    //On obtient les 2 valeurs en Char
-    //Passage des valeurs en int
-    Couple[0] = atoi(v1);
-    Couple[1] = atoi(v2);
-
-    return Couple;
 }
 //==============================================================================
 //Gestion partie
@@ -1185,12 +1144,8 @@ char* listePartieRejoindre(Partie* ListePartie)
 	strcpy(liste,"");
 	for(int i=0;i<MAX_PARTIE;i++)
 	{
-		printf("i : %d tour : %d %d\n",i,ListePartie[i].tourActu,ListePartie[i].idJ1);
-
 		if(ListePartie[i].idJ1 != 0 && ListePartie[i].idJ2 == 0)
 		{
-			printf("YOUPI TAS REUSSI \n");
-
 			strcat(liste,ListePartie[i].userJ1);
 			strcat(liste,"-");
 		}
@@ -1236,4 +1191,8 @@ char* genGuest(int* numGuest)
 	return name;
 }
 
+int adversaire	(Partie* Session,int idClient)
+{
+	return (Session->idJ1 == idClient) ?Session->idJ2 : Session->idJ1;
+}
 //==============================================================================

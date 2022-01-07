@@ -100,7 +100,8 @@ int main(int argc , char *argv[])
 		close(socket_desc);
 		return 1;
 	}
- 	close(socket_desc);
+	free(argsThread);
+	close(socket_desc);
 	return 0;
 }
 
@@ -111,11 +112,13 @@ void *traitement_connection(void *argsThread)
 {
 	Args* nv = (Args*)argsThread;
 	int sock = nv->idClient;
-	int index;
+	int index,equipe;
+
 	Partie* Session = NULL;
 	//int sock = nv->idClient;
 	char pseudo[20] = "";
 	int read_size;
+	int test = FALSE;
 
 
 	#ifdef DEBUG
@@ -126,12 +129,7 @@ void *traitement_connection(void *argsThread)
 	while( 1 )
 	{
 		char msgRecu[MAX_BUFFER]="";
-
 		//Cas premier tour : la partie possède les deux joueurs
-		if(Session != NULL && Session->idJ1 != 0 && Session->idJ2 != 0 && Session->tourActu == 0)
-		{
-			printf("La partie commence !\n");
-		}
 
 		//while(1)
 		//Renvoi du même message
@@ -144,7 +142,6 @@ void *traitement_connection(void *argsThread)
 		{
 			utiliserCompte(pseudo,2);
 			fprintf(stdout,"Déconnection client %d\n",sock);
-			free(argsThread);
 			break;
 		}
 		else if(read_size == -1)
@@ -154,6 +151,8 @@ void *traitement_connection(void *argsThread)
 			break;
 		}
 		//Aiguillage des messages clients
+		printf("MSGRECU %s\n",msgRecu);
+
 		char* type = strtok(msgRecu,"-");
 		char* code = strtok(NULL,"-");
 
@@ -215,6 +214,7 @@ void *traitement_connection(void *argsThread)
 						Session = &nv->Lpartie[index];
 						nv->Lpartie[index].idJ1 = sock;
 						nv->Lpartie[index].userJ1=pseudo;
+						equipe = J1;
 					}
 					else strcpy(msgRetour,"msgError");
 					break;
@@ -222,7 +222,6 @@ void *traitement_connection(void *argsThread)
 					//rejoindre -> client recup str de pseudo
 					strcpy(msgRetour,listePartieRejoindre(nv->Lpartie));
 					//Si pas de partie dispo la fonction renvoie une chaine vide
-					printf("client%d chaine parties :%s",sock,msgRetour);
 					if(!strcmp(msgRetour,""))
 						strcpy(msgRetour,"msgError");
 					break;
@@ -232,8 +231,35 @@ void *traitement_connection(void *argsThread)
 					Session = &nv->Lpartie[index];
 					Session->idJ2  = sock;
 					Session->userJ2= pseudo;
-					printf("DEBUG client%d Session : %d\n",sock,Session->idJ1);
+					Session->tourActu = J1;
+					equipe = J2;
+					//Envoie des premiers coups du J1
+					int** coupLegaux = prioMouvement(Session->Damier,J1);
+					char* msg = malloc(MAX_BUFFER*sizeof(char));
+					strcpy(msg,"DEBUT_TOUR");
+
+					if(write(Session->idJ1, msg , strlen(msg)) == -1)
+					{
+						printf("DEBUG envoie impossible\n");
+					}
+
+					strcpy(msg,transformCoupleToChar(coupLegaux));
+					printf("\n\nenvoie msg%d\n\n",Session->idJ1);
+
+					if(write(Session->idJ1, msg , strlen(msg)) == -1)
+					{
+						printf("DEBUG envoie impossible\n");
+					}
+
 					strcpy(msgRetour,Session->userJ1);
+					if(write(Session->idJ2, msgRetour , strlen(msgRetour)) == -1)
+					{
+						printf("DEBUG envoie impossible\n");
+					}
+					printf("client%d Session : %d\n",sock,index);
+					strcpy(msgRetour,"ACTUALISER");
+					printf("MSGRETOUR ____ %s\n",msgRetour);
+
 					break;
 				case 2220:
 					//regarder -> client recup str de pseudo
@@ -248,9 +274,68 @@ void *traitement_connection(void *argsThread)
 					break;
 			}
 		}
-		printf("Message retourné à client%d : %s\n",sock,msgRetour);
+		else if(!strcmp(type,"GAME"))
+		{
+			int intCode = atoi(code);
+			char* info = malloc(MAX_BUFFER*sizeof(char));
+			int** Gcoup;
+			switch(intCode)
+			{
+				//debut tour du joueur
+				case 1:
+					strcpy(info,strtok(NULL,""));
+					Gcoup = transformCharToCouple(info);
+					bougerPiece(Session->Damier,Gcoup[1][0],Gcoup[1][1]);
+					int* direct = direction(Gcoup[1][0]);
+					for(int i=0;i<4;i++)
+					{
+						int voisin = Gcoup[1][0] + direct[i];
+						int* directVoisin = direction(voisin);
+						if (Gcoup[1][1] == voisin)
+						{
+							//coup terminal
+							Session->tourPrec = Session->tourActu;
+							Session->tourActu = adversaire(Session,Session->tourActu);
 
-		write(sock , msgRetour , strlen(msgRetour));
+							printf("Fin du tour pour client%d",sock);
+							//Envoie des premiers coups du J1
+							int** coupLegaux = prioMouvement(Session->Damier,(equipe%2)+1);
+							char* msg = transformCoupleToChar(coupLegaux);
+
+							if(write(Session->tourActu, msg , strlen(msg)) == -1)
+							{
+								fprintf(stderr,"Erreur envoie message impossible\n");
+							}
+							printf("client%d Session : %d\n",sock,index);
+							strcpy(msgRetour,"FIN_TOUR");
+						}
+						else if (Gcoup[1][1] == voisin + directVoisin[i])
+						{
+							//On a mangé un piond donc
+							//write()
+							printf("On fait des verife %d\n",adversaire(Session,sock));
+
+						}
+					}
+					break;
+				//coup du joueur
+				case 2:
+
+					//J2 recois le coup
+
+					//if(coup terminal)
+					//envoie(j2,'a toi')
+					//->
+					break;
+				default:
+					break;
+
+			}
+		}
+		printf("Message retourné à client%d : %s\n",sock,msgRetour);
+		if(test) write(Session->tourActu , msgRetour , strlen(msgRetour));
+		else     write(sock  			 , msgRetour , strlen(msgRetour));
 	}
+
 	return 0;
 }

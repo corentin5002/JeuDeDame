@@ -34,7 +34,7 @@ struct Partie
 {
 	Case * Damier; //Damier de la partie
 	int tourActu;	//indique qui doit jouer
-	int tourPrec; //identifiant de la partie
+	int tourPrec; 	//indique qui a joué avant
 	int idJ1; //contient l'idClient du joueur 1
 	char* userJ1;//""		le pseudo du joueur1
 	int idJ2; //idem 				  joueur 2
@@ -116,10 +116,10 @@ int caseAvecCoord			(int x,int y);
 int* coordAvecCase			(int coordP);
 int* entreeJoueur			(Case* Damier,int** MouvLegaux);
 //------------------------------------------------------------------------------
-int * transformCharToCouple	(char * ChaineChar);
 Case * transformCharToDamier(char * ChaineChar);
 char * transformDamierToChar(Case * Damier);
-char * transformCoupleToChar(Case * Damier,int Couple[2]);
+char * transformCoupleToChar(int** TabCouple);
+int ** transformCharToCouple(char * ChaineChar);
 
 Partie* genListePartie		();
 char* listePartieRegarder	(Partie* ListePartie);
@@ -129,5 +129,7 @@ char * envoie				(int idClient, char * message);
 char* listePartieRejoindre	(Partie* ListePartie);
 char* listePartieRegarder	(Partie* ListePartie);
 char* genGuest				(int* numGuest);
+
+int adversaire				(Partie* Session,int idClient);
 
 #endif
