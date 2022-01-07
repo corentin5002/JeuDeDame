@@ -73,7 +73,7 @@ char* optionGame		(char* idClient);
 char* connexion			();
 char* deconnexion		(char* idClient);
 char* authentification	(char* idClient);
-char* creationPartie	(char* idClient);
+char* attenteJoueur 	(char* idClient);
 char* jeuPartie			(char* idClient, int equipe);
 char* rejoindreSession	(char* idClient);
 char* rejoindrePartie	(char* idPartie, int partie);
