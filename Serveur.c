@@ -83,9 +83,6 @@ int main(int argc , char *argv[])
 		argsThread->Lpartie = ListePartie;
 		argsThread->idClient= client_sock;
 		argsThread->numGuest= tmp;
-		printf("yayaya%d \n",*argsThread->numGuest);
-
-		printf("DEBUG\n");
 
 		if( pthread_create( &sniffer_thread , NULL ,  traitement_connection , (void*)argsThread) < 0)
 		{
@@ -116,7 +113,7 @@ void *traitement_connection(void *argsThread)
 	int index = indexCreerPartie(nv->Lpartie);
 	Partie* Session = &nv->Lpartie[index];
 	int sock = nv->idClient;
-
+	char pseudo[20] = "";
 	int read_size;
 
 	#ifdef DEBUG
@@ -135,6 +132,7 @@ void *traitement_connection(void *argsThread)
 		}
 		else if (read_size == 0)
 		{
+			utiliserCompte(pseudo,2);
 			fprintf(stdout,"Déconnection client %d\n",sock);
 			free(argsThread);
 			break;
@@ -148,6 +146,7 @@ void *traitement_connection(void *argsThread)
 		//Aiguillage des messages clients
 		char* type = strtok(msgRecu,"-");
 		char* code = strtok(NULL,"-");
+
 		char  msgRetour[MAX_BUFFER] ="";
 
 		//Connexion ou déconnexion
@@ -171,6 +170,7 @@ void *traitement_connection(void *argsThread)
 					test = utiliserCompte(info,0);
 					if(test)
 					{
+						strcpy(pseudo,info);
 						strcpy(msgRetour,"succes");
 					}
 					//Sinon
@@ -181,6 +181,7 @@ void *traitement_connection(void *argsThread)
 					test = utiliserCompte(info,1);
 					if(test)
 					{
+						strcpy(pseudo,info);
 						strcpy(msgRetour,"succes");
 					}
 					//Sinon
@@ -188,8 +189,8 @@ void *traitement_connection(void *argsThread)
 					break;
 				case 202:
 					//Retourne un pseudo généré aléatoirement
-					strcpy(msgRetour,genGuest(nv->numGuest));
-					printf("DEBUG \n");
+					strcpy(pseudo,genGuest(nv->numGuest));
+					strcpy(msgRetour,pseudo);
 					printf("%s\n",msgRetour);
 
 					break;

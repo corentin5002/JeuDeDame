@@ -1021,14 +1021,15 @@ void decoReco(FILE* fichier,long curseur,char nvChar)
 
 int utiliserCompte(char* compte,int mode)
 {
+
 	FILE* fichier = fopen("comptes","r+");
 	char* buff = malloc(22*sizeof(char));
 	char* modifCompte=malloc(22*sizeof(char));
-	strcat(modifCompte,"-");
-	strcat(modifCompte,compte);
 	//Trouver un pseudo existant dans le fichier
 	if(mode == 0)
 	{
+		strcat(modifCompte,"-");
+		strcat(modifCompte,compte);
 		while(fscanf(fichier,"%s\n",buff) != -1)
 		{
 			//Si on détecte le nom dans la base de donnée
@@ -1070,6 +1071,23 @@ int utiliserCompte(char* compte,int mode)
 			ajoutCompte(fichier,compte);
 			free(fichier);
 			return 1;
+		}
+	}
+	else if(mode == 2)
+	{
+		strcat(modifCompte,"+");
+		strcat(modifCompte,compte);
+		//Deconnexion
+		while(fscanf(fichier,"%s\n",buff) != -1)
+		{
+			//Si on détecte le nom dans la base de donnée
+			if(buff[0]=='+' && !strcmp(modifCompte,buff))
+			{
+				fseek(fichier,-strlen(compte)-2,SEEK_CUR);
+				decoReco(fichier,ftell(fichier),'-');
+				free(fichier);
+				return 1;
+			}
 		}
 	}
 	else
@@ -1271,7 +1289,7 @@ char * envoie(int idClient, char * message)
     {
         fprintf(stderr,"Echec reception\n");
         return "msgError";
-    }	
+    }
 	return  message_retour;
 }
 char* genGuest(int* numGuest)
