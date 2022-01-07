@@ -7,11 +7,6 @@ Client
 #include <arpa/inet.h>
 #include <unistd.h>
 #include "fonctions.h"
-<<<<<<< HEAD
-
-#define MAX_BUFFER 2000
-=======
->>>>>>> debutReseau
 
 int main(int argc , char *argv[])
 {
@@ -49,7 +44,7 @@ int main(int argc , char *argv[])
 	while(1)
 	{
 		char message_retour[MAX_BUFFER] = "";
-		
+
 		strcpy(message_retour,authentification(sock));
 
 		fprintf(stdout,"Réponse du serveur: %s\n",message_retour);
